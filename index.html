@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pulse - Connect, Share, Discover</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        :root {
+            --primary-color: #426eff; /* Twitter Blue */
+            --secondary-color: #14171A; /* Dark Twitter */
+            --accent-color: #426eff; /* Twitter Blue */
+            --background-color: #15202B; /* Twitter Dark Mode Background */
+            --text-color: #FFFFFF; /* White */
+            --light-text-color: #8899A6; /* Twitter Light Gray */
+            --card-background: #192734; /* Twitter Card Background */
+            --border-color: #38444D; /* Twitter Border Color */
+            --shadow-color: rgba(0, 0, 0, 0.2); /* Subtle Shadow */
+            --hover-color: #1A2836; /* Hover effect color */
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Utility Classes */
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0;
+            background-color: var(--background-color);
+            border-radius: 0;
+            box-shadow: none;
+            border: none;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Header Styles */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            background-color: var(--background-color);
+            z-index: 100;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: var(--text-color);
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .user-dropdown {
+            position: relative;
+        }
+
+        .user-button {
+            background-color: transparent;
+            color: var(--text-color);
+            border: none;
+            padding: 8px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .user-button:hover {
+            background-color: rgba(29, 161, 242, 0.1);
+        }
+
+        .dropdown-content {
+            position: absolute;
+            right: 0;
+            background-color: var(--card-background);
+            min-width: 200px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            z-index: 1;
+            border-radius: 4px;
+            overflow: hidden;
+            display: none;
+            margin-top: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .dropdown-content a {
+            color: var(--text-color);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.2s;
+            font-size: 15px;
+        }
+
+        .dropdown-content a:hover {
+            background-color: var(--hover-color);
+        }
+
+        .show {
+            display: block;
+        }
+
+        /* Post Styles */
+        .post {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--background-color);
+            transition: background-color 0.2s;
+            margin-bottom: 0;
+            border-radius: 0;
+            box-shadow: none;
+            border-left: none;
+            border-right: none;
+        }
+
+        .post:hover {
+            background-color: var(--hover-color);
+            transform: none;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .post-author {
+            font-weight: 700;
+            color: var(--text-color);
+            font-size: 15px;
+            margin-right: 5px;
+        }
+
+        .post-date {
+            font-size: 14px;
+            color: var(--light-text-color);
+        }
+
+        .post-content {
+            line-height: 1.5;
+            margin-bottom: 12px;
+            font-size: 15px;
+            word-wrap: break-word;
+        }
+
+        /* Button Styles */
+        .like-button,
+        .comment-button,
+        .event-button {
+            background-color: transparent;
+            color: var(--light-text-color);
+            border: none;
+            padding: 8px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: color 0.2s, background-color 0.2s;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            margin-right: 12px;
+        }
+
+        .like-button:hover,
+        .comment-button:hover,
+        .event-button:hover {
+            background-color: rgba(29, 161, 242, 0.1);
+            color: var(--primary-color);
+            transform: none;
+            box-shadow: none;
+        }
+
+        .like-count {
+            margin-left: 5px;
+            color: var(--light-text-color);
+            font-size: 13px;
+        }
+
+        .comment-button {
+            background-color: transparent;
+        }
+
+        .comment-button:hover {
+            background-color: rgba(29, 161, 242, 0.1);
+        }
+
+        /* New Post Form */
+        .new-post-form {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--background-color);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .new-post-form textarea {
+            width: 100%;
+            padding: 12px 0;
+            margin-bottom: 12px;
+            border: none;
+            box-sizing: border-box;
+            font-size: 19px;
+            background-color: transparent;
+            color: var(--text-color);
+            resize: none;
+            font-family: inherit;
+            outline: none;
+            min-height: 80px;
+        }
+
+        .new-post-form textarea::placeholder {
+            color: var(--light-text-color);
+        }
+
+        .new-post-form button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+            transition: background-color 0.2s;
+            align-self: flex-end;
+            min-width: 80px;
+        }
+
+        .new-post-form button:hover {
+            background-color: #1991DB;
+        }
+
+        /* Comments Section */
+        .comments-section {
+            margin-top: 8px;
+            padding-left: 16px;
+            border-left: 2px solid var(--border-color);
+            margin-left: 16px;
+        }
+
+        .comment {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+            margin-bottom: 8px;
+        }
+
+        .comment:last-child {
+            border-bottom: none;
+        }
+
+        .comment-author {
+            font-size: 14px;
+            font-weight: 700;
+            margin-right: 5px;
+            color: var(--text-color);
+        }
+
+        .comment-date {
+            font-size: 13px;
+            color: var(--light-text-color);
+        }
+
+        .comment-content {
+            font-size: 14px;
+            color: var(--text-color);
+            line-height: 1.4;
+        }
+
+        /* Reply Form */
+        .reply-form {
+            margin-top: 8px;
+            width: 90%;
+        }
+
+        .reply-form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            resize: none;
+            font-size: 14px;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            outline: none;
+            transition: border-color 0.3s;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        .reply-form textarea:focus {
+            border-color: var(--primary-color);
+        }
+
+        .reply-form button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            transition: background-color 0.2s;
+            margin-top: 8px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+        }
+
+        .reply-form button:hover {
+            background-color: var(--accent-color);
+        }
+
+        /* Auth Styles */
+        .auth-container {
+            width: 100%;
+            max-width: 400px;
+            margin: 50px auto;
+            background-color: var(--card-background);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+        }
+
+        .auth-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--text-color);
+            font-size: 23px;
+        }
+
+        .auth-container label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-color);
+            font-size: 15px;
+        }
+
+        .auth-container input[type="text"],
+        .auth-container input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 15px;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            transition: border-color 0.3s;
+        }
+
+        .auth-container input[type="text"]:focus,
+        .auth-container input[type="password"]:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        .auth-container button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 15px;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+
+        .auth-container button:hover {
+            background-color: #1991DB;
+        }
+
+        .auth-container .error-message {
+            color: #E0245E;
+            margin-top: 10px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .auth-container p {
+            text-align: center;
+            margin-top: 16px;
+            color: var(--light-text-color);
+            font-size: 14px;
+        }
+
+        .auth-container a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .auth-container a:hover {
+            text-decoration: underline;
+        }
+
+        .loading-spinner {
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 0.8s linear infinite;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Make scrolling smoother */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Custom Scroll Bars - minimal style like Twitter */
+        ::-webkit-scrollbar {
+            width: 4px;
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--background-color);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--light-text-color);
+        }
+
+        /* Media Queries for better mobile experience */
+        @media (max-width: 600px) {
+            .container {
+                width: 100%;
+                margin: 0;
+                border-radius: 0;
+            }
+            
+            .auth-container {
+                width: 90%;
+                margin: 20px auto;
+            }
+        }
+
+        .liked {
+            background-color: var(--primary-color);
+            color: white; /* Change text color to white for better contrast */
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Pulse</h1>
+        <div class="user-info">
+            <div class="user-avatar" id="userAvatar" onclick="toggleDropdown(event)"></div>
+            <div class="user-dropdown">
+                <button class="user-button" onclick="toggleDropdown(event)"><span id="usernameDisplay"></span> ▼</button>
+                <div id="userDropdown" class="dropdown-content">
+                    <a href="#" onclick="logout()">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="authSection">
+    </div>
+
+    <div id="loadingSpinner" class="loading-spinner hidden"></div>
+
+    <div id="contentSection" class="hidden">
+        <div class="new-post-form">
+            <textarea id="newPostText" placeholder="What's on your mind?"></textarea>
+            <button onclick="createPost()">Post</button>
+        </div>
+
+        <div id="posts">
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+    // Declare all variables at the top
+    const SUPABASE_URL = 'https://aqjzqzccqhrmekyagmip.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxanpxemNjcWhybWVreWFnbWlwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ1NzEyMDcsImV4cCI6MjA2MDE0NzIwN30.E-2jlso6AnOSkXBs5ihgmZbb0fOqdDVsUIIhagGHQes';
+
+    // Initialize the Supabase client
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Initialize variables that will be used globally
+    let currentUser = null;
+    let postsChannel = null; // Initialize postsChannel to null
+
+    async function loadInitialData() {
+        try {
+            await loadUser();
+            await renderAuthSection();
+
+            if (currentUser) {
+                await loadPosts();
+                renderPosts();
+                setupRealtime(); // Add this line
+            }
+        } catch (error) {
+            console.error("Initialization error:", error);
+            alert("Failed to load application. Please refresh.");
+        }
+    }
+
+    async function loadUser() {
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        currentUser = user;
+    }
+
+    // Account Management
+
+    async function renderAuthSection() {
+        const authSection = document.getElementById('authSection');
+        const contentSection = document.getElementById('contentSection');
+        if (currentUser) {
+            contentSection.classList.remove('hidden');
+            authSection.style.display = 'none';
+            document.getElementById('usernameDisplay').textContent = currentUser.email;
+            document.getElementById('userAvatar').textContent = currentUser.email.charAt(0).toUpperCase(); // Display first letter in avatar
+        } else {
+            contentSection.classList.add('hidden');
+            authSection.style.display = 'block';
+            authSection.innerHTML = `
+            <div class="auth-container">
+                <h2>Login to SchoolBuzz</h2>
+                <label for="loginEmail">Email:</label>
+                <input type="text" id="loginEmail">
+                <label for="loginPassword">Password:</label>
+                <input type="password" id="loginPassword">
+                <button onclick="login()">Login</button>
+                <p>New to SchoolBuzz? <a href="#" onclick="renderSignupForm()">Sign up</a></p>
+                <div id="loginError" class="error-message"></div>
+            </div>
+        `;
+        }
+    }
+
+    function renderSignupForm() {
+        const authSection = document.getElementById('authSection');
+        authSection.innerHTML = `
+        <div class="auth-container">
+            <h2>Join SchoolBuzz!</h2>
+            <label for="signupEmail">Email:</label>
+            <input type="text" id="signupEmail">
+            <label for="signupPassword">Password:</label>
+            <input type="password" id="signupPassword">
+            <button onclick="signup()">Sign Up</button>
+            <p>Already buzzing? <a href="#" onclick="renderAuthSection()">Login</a></p>
+            <div id="signupError" class="error-message"></div>
+        </div>
+    `;
+    }
+
+    async function signup() {
+        const email = document.getElementById('signupEmail').value;
+        const password = document.getElementById('signupPassword').value;
+        const errorDiv = document.getElementById('signupError');
+
+        if (!email || !password) {
+            errorDiv.textContent = "Please enter both email and password.";
+            return;
+        }
+
+        const { data, error } = await supabaseClient.auth.signUp({
+            email: email,
+            password: password,
+        });
+
+        if (error) {
+            errorDiv.textContent = error.message;
+            return;
+        }
+
+        currentUser = data.user;
+        await renderAuthSection();
+        await loadPosts();
+        renderPosts();
+
+    }
+
+    async function login() {
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    const errorDiv = document.getElementById('loginError');
+
+    if (!email || !password) {
+        errorDiv.textContent = "Please enter both email and password.";
+        return;
+    }
+
+    try {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password,
+        });
+
+        if (error) throw error;
+        
+        currentUser = data.user;
+        await renderAuthSection();
+        await loadPosts();
+        renderPosts();
+    } catch (error) {
+        errorDiv.textContent = error.message || "Login failed. Please try again.";
+        console.error("Login error:", error);
+    }
+}
+
+    async function logout() {
+        // Remove realtime subscription
+        if (postsChannel) {
+            await supabaseClient.removeChannel(postsChannel);
+        }
+        
+        await supabaseClient.auth.signOut();
+        currentUser = null;
+        await renderAuthSection();
+        document.getElementById('contentSection').classList.add('hidden');
+    }
+
+
+    function toggleDropdown(event) {
+        event.stopPropagation(); // Prevent the click event from bubbling up
+        document.getElementById("userDropdown").classList.toggle("show");
+    }
+
+    // Close the dropdown if the user clicks outside of it
+    window.onclick = function(event) {
+        if (!event.target.matches('.user-button') && !event.target.closest('.user-info')) {
+            var dropdowns = document.getElementsByClassName("dropdown-content");
+            for (let i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
+            }
+        }
+    }
+
+
+    async function createPost() {
+        const newPostText = document.getElementById('newPostText').value;
+        if (newPostText.trim() !== "") {
+            const newPost = {
+                author: currentUser.email,
+                content: newPostText,
+                created_at: new Date().toISOString(),
+                user_id: currentUser.id
+            };
+
+            const { data, error } = await supabaseClient
+                .from('posts')
+                .insert([newPost]);
+
+            if (error) {
+                console.error('Error creating post:', error);
+                return;
+            }
+
+            // Dynamically update the posts without reloading
+            await loadPosts();
+            renderPosts();
+            document.getElementById('newPostText').value = ""; // Clear the textarea
+        }
+    }
+
+
+    function setupRealtime() {
+      // Remove existing channel if it exists
+      if (postsChannel) {
+        supabaseClient.removeChannel(postsChannel);
+      }
+
+      // Subscribe to posts changes
+      postsChannel = supabaseClient
+        .channel('posts_changes')
+        .on(
+          'postgres_changes',
+          {
+            event: '*', // Listen to all changes (INSERT, UPDATE, DELETE)
+            schema: 'public',
+            table: 'posts'
+          },
+          () => {
+            // Debounce to prevent rapid refreshes
+            debouncedRefreshPosts();
+          }
+        )
+        .subscribe();
+      const commentsChannel = supabaseClient
+        .channel('comments_changes')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'comments'
+          },
+          () => {
+            debouncedRefreshPosts();
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabaseClient.removeChannel(postsChannel);
+        supabaseClient.removeChannel(commentsChannel);
+      };
+    }
+
+    // Debounce function to prevent too many rapid refreshes
+    let refreshTimeout;
+    function debouncedRefreshPosts() {
+      clearTimeout(refreshTimeout);
+      refreshTimeout = setTimeout(async () => {
+        await loadPosts();
+        renderPosts();
+      }, 500); // Wait 500ms after last change
+    }
+
+
+    async function likePost(postId) {
+        // Fetch existing likes for the post from Supabase
+        const { data: existingLikes, error: fetchError } = await supabaseClient
+            .from('likes')
+            .select('*')
+            .eq('post_id', postId)
+            .eq('user_id', currentUser.id);
+
+        if (fetchError) {
+            console.error('Error fetching likes:', fetchError);
+            return;
+        }
+
+        if (existingLikes && existingLikes.length > 0) {
+            // User already liked the post, so unlike it
+            const { error: deleteError } = await supabaseClient
+                .from('likes')
+                .delete()
+                .eq('post_id', postId)
+                .eq('user_id', currentUser.id);
+
+            if (deleteError) {
+                console.error('Error unliking post:', deleteError);
+                return;
+            }
+        } else {
+            // User hasn't liked the post, so like it
+            const { error: insertError } = await supabaseClient
+                .from('likes')
+                .insert([{ post_id: postId, user_id: currentUser.id }]);
+
+            if (insertError) {
+                console.error('Error liking post:', insertError);
+                return;
+            }
+        }
+
+
+        await loadPosts();
+        renderPosts();
+    }
+
+
+    async function addComment(postId, commentText) {
+        const newComment = {
+            post_id: postId,
+            author: currentUser.email,
+            content: commentText,
+            created_at: new Date().toISOString(),
+            user_id: currentUser.id
+        };
+
+
+        const { data, error } = await supabaseClient
+            .from('comments')
+            .insert([newComment]);
+
+        if (error) {
+            console.error('Error adding comment:', error);
+            return;
+        }
+
+
+        await loadPosts();
+        renderPosts();
+    }
+
+    async function renderComments(postId) {
+        const { data: comments, error } = await supabaseClient
+            .from('comments')
+            .select('*')
+            .eq('post_id', postId)
+            .order('created_at', { ascending: true });
+
+        if (error) {
+            console.error('Error fetching comments:', error);
+            return '';
+        }
+
+
+        let commentsHTML = '';
+        comments.forEach(comment => {
+            commentsHTML += `
+                <div class="comment">
+                    <span class="comment-author">${comment.author}</span>
+                    <span class="comment-date">${new Date(comment.created_at).toLocaleString()}</span>
+                    <p class="comment-content">${comment.content}</p>
+                </div>
+            `;
+        });
+
+        return commentsHTML;
+    }
+
+
+    let posts = [];
+
+    async function loadPosts() {
+        // Show the loading spinner
+        document.getElementById('loadingSpinner').classList.remove('hidden');
+
+        const { data, error } = await supabaseClient
+            .from('posts')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        // Hide the loading spinner
+        document.getElementById('loadingSpinner').classList.add('hidden');
+
+        if (error) {
+            console.error('Error fetching posts:', error);
+            return;
+        }
+
+        posts = data;
+    }
+
+
+    async function renderPosts() {
+          const postsContainer = document.getElementById('posts');
+  
+          // Store current scroll position
+          const scrollPosition = window.scrollY;
+          postsContainer.innerHTML = "";
+
+        for (const post of posts) {
+            const postDiv = document.createElement('div');
+            postDiv.classList.add('post');
+
+            const postId = post.id;
+
+
+            const { data: likes, error: likesError } = await supabaseClient
+                .from('likes')
+                .select('*')
+                .eq('post_id', postId);
+
+            if (likesError) {
+                console.error('Error fetching likes:', likesError);
+            }
+
+            const likeCount = likes ? likes.length : 0;
+
+            // Check if the current user has liked the post
+            const userLiked = likes && likes.some(like => like.user_id === currentUser.id);
+
+            let likeButtonClass = 'like-button';
+            let likeButtonText = userLiked ? '<i class="fas fa-thumbs-up" style="color: var(--primary-color);"></i>' : '<i class="fas fa-thumbs-up"></i>';
+
+            let buttonsHTML = `
+                <button class="${likeButtonClass}" onclick="likePost(${postId})">${likeButtonText}</button>
+                <span class="like-count">${likeCount}</span>
+                <button class="comment-button" style="margin-left: 20px;" onclick="toggleCommentForm(${postId})"><i class="fas fa-comment"></i></button>
+            `;
+
+            postDiv.innerHTML = `
+                <div class="post-header">
+                    <div class="post-author">${post.author}</div>
+                    <div class="post-date">${new Date(post.created_at).toLocaleString()}</div>
+                </div>
+                <div class="post-content">${post.content}</div>
+                <div>
+                    ${buttonsHTML}
+                </div>
+
+                <div id="commentForm-${postId}" class="reply-form" style="display:none;">
+                    <textarea id="commentText-${postId}" placeholder="Write a comment..."></textarea>
+                    <button onclick="addComment(${postId}, document.getElementById('commentText-${postId}').value)">Post Comment</button>
+                </div>
+
+                <div class="comments-section">
+                    ${await renderComments(postId)}
+                </div>
+            `;
+
+            postsContainer.appendChild(postDiv);
+        }
+        window.scrollTo(0, scrollPosition);
+
+    }
+
+
+    function toggleCommentForm(postId) {
+        const commentForm = document.getElementById(`commentForm-${postId}`);
+        commentForm.style.display = commentForm.style.display === 'none' ? 'block' : 'none';
+    }
+
+    // Initial render
+    loadInitialData();
+</script>
+
+</body>
+</html>
