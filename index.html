@@ -492,6 +492,27 @@
             background-color: var(--primary-color);
             color: white; /* Change text color to white for better contrast */
         }
+
+        .footer {
+            background-color: var(--background-color);
+            color: var(--light-text-color);
+            text-align: center;
+            padding: 10px 0;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -525,6 +546,10 @@
         </div>
     </div>
 
+</div>
+
+<div class="footer">
+    <p>Made with ❤️ using <a href="https://seeksimpler.com" target="_blank">Seek</a></p>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -576,13 +601,13 @@
             authSection.style.display = 'block';
             authSection.innerHTML = `
             <div class="auth-container">
-                <h2>Login to SchoolBuzz</h2>
+                <h2>Login to Pulse</h2>
                 <label for="loginEmail">Email:</label>
                 <input type="text" id="loginEmail">
                 <label for="loginPassword">Password:</label>
                 <input type="password" id="loginPassword">
                 <button onclick="login()">Login</button>
-                <p>New to SchoolBuzz? <a href="#" onclick="renderSignupForm()">Sign up</a></p>
+                <p>New to Pulse? <a href="#" onclick="renderSignupForm()">Sign up</a></p>
                 <div id="loginError" class="error-message"></div>
             </div>
         `;
@@ -593,7 +618,7 @@
         const authSection = document.getElementById('authSection');
         authSection.innerHTML = `
         <div class="auth-container">
-            <h2>Join SchoolBuzz!</h2>
+            <h2>Join Pulse!</h2>
             <label for="signupEmail">Email:</label>
             <input type="text" id="signupEmail">
             <label for="signupPassword">Password:</label>
