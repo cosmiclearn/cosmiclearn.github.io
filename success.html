@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Links</title>
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --primary-color: #9d4edd;
+            --secondary-color: #3a0ca3;
+            --accent-color: #7b2cbf;
+            --text-color: #f8f9fa;
+            --bg-dark: #0f0a1e;
+            --bg-light: #1a1333;
+            --success-color: #4ade80;
+            --error-color: #ef4444;
+            --card-bg: rgba(26, 19, 51, 0.7);
+            --glass-effect: rgba(255, 255, 255, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark), #200c52);
+            color: var(--text-color);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Enhanced star field */
+        #stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.8);
+            filter: blur(0.5px);
+            animation: twinkle var(--duration) ease-in-out infinite;
+        }
+
+        .shooting-star {
+            position: absolute;
+            width: 100px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #fff, transparent);
+            animation: shootingStar 6s linear infinite;
+            opacity: 0;
+            transform: rotate(-45deg);
+            z-index: -1;
+        }
+
+        @keyframes shootingStar {
+            0% {
+                transform: translate(0, 0) rotate(-45deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            20% {
+                transform: translate(-200px, 200px) rotate(-45deg);
+                opacity: 0;
+            }
+            100% {
+                transform: translate(-200px, 200px) rotate(-45deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+
+        /* Cosmic nebula effect */
+        .nebula {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: 0.15;
+            z-index: -2;
+        }
+
+        .nebula-1 {
+            background: radial-gradient(circle, #9d4edd, transparent);
+            width: 500px;
+            height: 500px;
+            top: -100px;
+            left: -100px;
+        }
+
+        .nebula-2 {
+            background: radial-gradient(circle, #5390d9, transparent);
+            width: 700px;
+            height: 700px;
+            bottom: -200px;
+            right: -100px;
+        }
+
+        /* Main container */
+        .app-container {
+            max-width: 1000px;
+            width: 90%;
+            margin: 0 auto;
+            padding: 40px 0 100px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .logo {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: transparent;
+            background: linear-gradient(135deg, #c77dff, #7b2cbf);
+            background-clip: text;
+            -webkit-background-clip: text;
+            letter-spacing: 2px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .tagline {
+            font-size: 1rem;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 1px;
+        }
+
+        /* Links container */
+        .links-container {
+            background: var(--card-bg);
+            border-radius: 24px;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .links-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(123, 44, 191, 0.1), transparent 70%);
+            z-index: -1;
+            animation: rotateGradient 20s linear infinite;
+        }
+
+        @keyframes rotateGradient {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .controls-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            max-width: 300px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 40px 12px 15px;
+            background: var(--glass-effect);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            color: var(--text-color);
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(123, 44, 191, 0.3);
+        }
+
+        .search-box i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .add-link-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-weight: 600;
+            font-family: 'Exo 2', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(123, 44, 191, 0.3);
+        }
+
+        .add-link-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(123, 44, 191, 0.4);
+        }
+
+        .add-link-btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* Categories filter */
+        .categories-filter {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-label {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            font-weight: 500;
+        }
+
+        .category-pill {
+            padding: 8px 18px;
+            border-radius: 50px;
+            background: var(--glass-effect);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .category-pill:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .category-pill.active {
+            background: linear-gradient(135deg, rgba(157, 78, 221, 0.3), rgba(58, 12, 163, 0.3));
+            border-color: rgba(157, 78, 221, 0.5);
+            box-shadow: 0 3px 12px rgba(123, 44, 191, 0.2);
+        }
+
+        /* Links list */
+        .links-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .link-item {
+            display: flex;
+            align-items: center;
+            padding: 18px 20px;
+            background: var(--glass-effect);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .link-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .link-item:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-3px) scale(1.01);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .link-item:hover::before {
+            opacity: 1;
+        }
+
+        .link-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 18px;
+            color: var(--accent-color);
+            flex-shrink: 0;
+        }
+
+        .link-content {
+            flex-grow: 1;
+            overflow: hidden;
+        }
+
+        .link-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .link-title a {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .link-title a:hover {
+            color: var(--primary-color);
+        }
+
+        .link-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .link-category {
+            padding: 4px 12px;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.08);
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .link-date {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .link-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-left: 20px;
+        }
+
+        .vote-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+
+        .vote-btn:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .upvote:hover, .upvoted {
+            color: var(--success-color);
+        }
+
+        .downvote:hover, .downvoted {
+            color: var(--error-color);
+        }
+
+        /* Modal styling */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, rgba(26, 19, 51, 0.95), rgba(15, 10, 30, 0.95));
+            padding: 35px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 550px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: scaleIn 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(157, 78, 221, 0.1), transparent);
+            pointer-events: none;
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-title {
+            font-size: 1.6rem;
+            font-weight: 600;
+            background: linear-gradient(90deg, #c77dff, #7b2cbf);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .close-modal {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .close-modal:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(123, 44, 191, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .form-group select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            background-size: 16px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(123, 44, 191, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.7s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(123, 44, 191, 0.4);
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        /* Status messages */
+        .empty-state, .loading {
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .empty-state i, .loading i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3, .loading h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .empty-state p, .loading p {
+            font-size: 0.95rem;
+            max-width: 300px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Loading animation */
+        .loader {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--accent-color);
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Footer credit */
+        .footer-credit {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(26, 19, 51, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 12px 30px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s ease;
+            z-index: 10;
+        }
+
+        .footer-credit a {
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .footer-credit:hover {
+            transform: translateX(-50%) translateY(-8px);
+            box-shadow: 0 15px 40px rgba(123, 44, 191, 0.3);
+            border-color: rgba(255, 255, 255, 0.25);
+            background: rgba(58, 12, 163, 0.8);
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+        }
+
+        .tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(26, 19, 51, 0.95);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
+        }
+
+        .tooltip:hover::after {
+            opacity: 1;
+            visibility: visible;
+            bottom: 135%;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .app-container {
+                width: 95%;
+                padding: 20px 0 100px;
+            }
+            
+            .logo {
+                font-size: 2.2rem;
+            }
+            
+            .controls-bar {
+                flex-direction: column;
+                gap: 15px;
+                align-items: stretch;
+            }
+            
+            .search-box {
+                max-width: 100%;
+            }
+            
+            .add-link-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .link-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            
+            .link-icon {
+                margin-right: 0;
+            }
+            
+            .link-meta {
+                flex-wrap: wrap;
+            }
+            
+            .link-actions {
+                width: 100%;
+                justify-content: space-between;
+                margin-left: 0;
+                margin-top: 10px;
+            }
+            
+            .modal-content {
+                padding: 25px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .categories-filter {
+                justify-content: center;
+            }
+            
+            .category-pill {
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+            
+            .modal-title {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Star field background -->
+    <div id="stars-container"></div>
+    
+    <!-- Cosmic nebula effects -->
+    <div class="nebula nebula-1"></div>
+    <div class="nebula nebula-2"></div>
+    
+    <!-- Shooting stars -->
+    <div class="shooting-star" style="top: 15%; left: 80%;"></div>
+    <div class="shooting-star" style="top: 50%; left: 10%;"></div>
+    <div class="shooting-star" style="top: 30%; left: 60%;"></div>
+    
+    <div class="app-container">
+        <header>
+            <h1 class="logo">Cosmic Links</h1>
+            <p class="tagline">Explore the universe of unblocked resources</p>
+        </header>
+        
+        <div class="links-container">
+            <div class="controls-bar">
+                <div class="search-box">
+                    <input type="text" id="searchLinks" placeholder="Search links...">
+                    <i class="fas fa-search"></i>
+                </div>
+                <button class="add-link-btn" id="openAddLinkModal">
+                    <i class="fas fa-plus"></i> Add New Link
+                </button>
+            </div>
+            
+            <div class="categories-filter" id="categoriesFilter">
+                <span class="filter-label">Filter:</span>
+                <div class="category-pill active" data-category="all">All</div>
+                <div class="category-pill" data-category="games">Games</div>
+                <div class="category-pill" data-category="social">Social</div>
+                <div class="category-pill" data-category="education">Education</div>
+                <div class="category-pill" data-category="productivity">Productivity</div>
+                <div class="category-pill" data-category="entertainment">Entertainment</div>
+            </div>
+            
+            <div class="links-list" id="linksList">
+                <div class="loading">
+                    <div class="loader"></div>
+                    <h3>Loading Links</h3>
+                    <p>Gathering the best unblocked resources from across the cosmos...</p>
+                </div>
+                
+                <!-- Example link item (will be populated dynamically) -->
+                <!--
+                <div class="link-item">
+                    <div class="link-icon">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <div class="link-content">
+                        <div class="link-title">
+                            <a href="https://example.com" target="_blank">Example Game Site</a>
+                        </div>
+                        <div class="link-meta">
+                            <div class="link-category">Games</div>
+                            <div class="link-date">
+                                <i class="far fa-clock"></i> Added 3 days ago
+                            </div>
+                        </div>
+                    </div>
+                    <div class="link-actions">
+                        <button class="vote-btn upvote tooltip" data-tooltip="Upvote">
+                            <i class="fas fa-arrow-up"></i> 24
+                        </button>
+                        <button class="vote-btn downvote tooltip" data-tooltip="Downvote">
+                            <i class="fas fa-arrow-down"></i> 3
+                        </button>
+                    </div>
+                </div>
+                -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Link Modal -->
+    <div class="modal" id="addLinkModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Add New Link</div>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <form id="addLinkForm">
+                <div class="form-group">
+                    <label for="linkTitle">Title</label>
+                    <input type="text" id="linkTitle" required placeholder="Enter link title">
+                </div>
+                <div class="form-group">
+                    <label for="linkUrl">URL</label>
+                    <input type="url" id="linkUrl" required placeholder="https://example.com">
+                </div>
+                <div class="form-group">
+                    <label for="linkCategory">Category</label>
+                    <select id="linkCategory" required>
+                        <option value="">Select a category</option>
+                        <option value="games">Games</option>
+                        <option value="social">Social</option>
+                        <option value="education">Education</option>
+                        <option value="productivity">Productivity</option>
+                        <option value="entertainment">Entertainment</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <button type="submit" class="submit-btn">
+                    Add to Collection
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="footer-credit">
+        <a href="https://seeksimpler.com" target="_blank">
+            <i class="fas fa-code"></i> Coded by Seek
+        </a>
+    </div>
+
+    <script>
+        // Create stars animation with different sizes
+        function createStars() {
+            const starsContainer = document.getElementById('stars-container');
+            starsContainer.innerHTML = ''; // Clear existing stars
+            
+            // Create different size stars for more dynamic effect
+            for (let i = 0; i < 250; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                // Random position
+                star.style.top = Math.random() * 100 + '%';
+                star.style.left = Math.random() * 100 + '%';
+                
+                // Random size (1-3px)
+                const size = Math.random() * 2 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                
+                // Random animation delays and durations
+                star.style.animationDelay = Math.random() * 5 + 's';
+                star.style.animationDuration = Math.random() * 15 + 5 + 's';
+                
+                // Brighter stars occasionally
+                if (Math.random() > 0.8) {
+                    star.style.boxShadow = `0 0 ${Math.random() * 6 + 2}px rgba(255, 255, 255, 0.8)`;
+                }
+                
+                starsContainer.appendChild(star);
+            }
+        }
+
+        createStars();
+        
+        // Recreate stars when window is resized
+        window.addEventListener('resize', createStars);
+
+        // Initialize Supabase client
+        const SUPABASE_URL = 'https://aqjzqzccqhrmekyagmip.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxanpxemNjcWhybWVreWFnbWlwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ1NzEyMDcsImV4cCI6MjA2MDE0NzIwN30.E-2jlso6AnOSkXBs5ihgmZbb0fOqdDVsUIIhagGHQes';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // DOM Elements
+        const linksList = document.getElementById('linksList');
+        const categoriesFilter = document.getElementById('categoriesFilter');
+        const addLinkModal = document.getElementById('addLinkModal');
+        const addLinkForm = document.getElementById('addLinkForm');
+        const openAddLinkModal = document.getElementById('openAddLinkModal');
+        const closeModal = document.getElementById('closeModal');
+
+        // State
+        let currentFilter = 'all';
+        let allLinks = [];
+        let categories = ['all', 'games', 'social', 'education', 'productivity', 'entertainment', 'other'];
+        let userVotes = {};
+
+        // Open modal with animation
+        openAddLinkModal.addEventListener('click', () => {
+            addLinkModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+        });
+
+        // Close modal
+        closeModal.addEventListener('click', () => {
+            addLinkModal.style.display = 'none';
+            document.body.style.overflow = 'auto'; // Re-enable scrolling
+        });
+
+        // Close modal if clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === addLinkModal) {
+                addLinkModal.style.display = 'none';
+                document.body.style.overflow = 'auto'; // Re-enable scrolling
+            }
+        });
+
+        // Initialize by fetching links from Supabase
+        async function fetchLinks() {
+            try {
+                linksList.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-pulse" style="margin-right: 10px;"></i>Loading links...</div>';
+                
+                const { data, error } = await supabaseClient
+                    .from('links')
+                    .select('*')
+                    .order('upvotes', { ascending: false });
+                
+                if (error) throw error;
+                
+                allLinks = data || [];
+                renderLinks();
+                loadUserVotes();
+            } catch (error) {
+                console.error('Error fetching links:', error);
+                linksList.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle" style="font-size: 2em; margin-bottom: 15px; opacity: 0.7;"></i><br>Failed to load links. Please try again later.</div>';
+            }
+        }
+
+        // Render links based on current filter with animation
+        function renderLinks() {
+            if (!allLinks.length) {
+                linksList.innerHTML = '<div class="empty-state"><i class="fas fa-link" style="font-size: 2em; margin-bottom: 15px; opacity: 0.7;"></i><br>No links available. Be the first to add one!</div>';
+                return;
+            }
+
+            const filteredLinks = currentFilter === 'all' 
+                ? allLinks 
+                : allLinks.filter(link => link.category === currentFilter);
+
+            if (!filteredLinks.length) {
+                linksList.innerHTML = `<div class="empty-state"><i class="fas fa-filter" style="font-size: 2em; margin-bottom: 15px; opacity: 0.7;"></i><br>No links found in the "${currentFilter}" category.</div>`;
+                return;
+            }
+
+            linksList.innerHTML = filteredLinks.map((link, index) => `
+                <div class="link-item" data-id="${link.id}" style="animation: fadeIn 0.3s forwards ${index * 0.05}s; opacity: 0; transform: translateY(10px);">
+                    <div class="link-icon">
+                        <i class="fas ${getCategoryIcon(link.category)}"></i>
+                    </div>
+                    <div class="link-content">
+                        <div class="link-title">
+                            <a href="${link.url}" target="_blank" rel="noopener noreferrer">
+                                ${link.title}
+                            </a>
+                        </div>
+                        <div class="link-meta">
+                            <div class="link-category">${link.category}</div>
+                            <div class="link-date">
+                                <i class="far fa-clock"></i> Added ${getTimeAgo(link.created_at || new Date())}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="link-actions">
+                        <button class="vote-btn upvote tooltip" data-tooltip="Upvote" data-id="${link.id}">
+                            <i class="fas fa-arrow-up"></i> ${link.upvotes || 0}
+                        </button>
+                        <button class="vote-btn downvote tooltip" data-tooltip="Downvote" data-id="${link.id}">
+                            <i class="fas fa-arrow-down"></i> ${link.downvotes || 0}
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            // Add keyframes for animation if not already added
+            if (!document.querySelector('style#link-animations')) {
+                const style = document.createElement('style');
+                style.id = 'link-animations';
+                style.textContent = `
+                    @keyframes fadeIn {
+                        from { opacity: 0; transform: translateY(10px); }
+                        to { opacity: 1; transform: translateY(0); }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+
+            // Add event listeners to vote buttons
+            document.querySelectorAll('.vote-btn').forEach(btn => {
+                btn.addEventListener('click', handleVote);
+            });
+        }
+
+        // Get appropriate icon for category
+        function getCategoryIcon(category) {
+            const icons = {
+                'games': 'fa-gamepad',
+                'social': 'fa-users',
+                'education': 'fa-graduation-cap',
+                'productivity': 'fa-tasks',
+                'entertainment': 'fa-film',
+                'other': 'fa-link'
+            };
+            return icons[category] || 'fa-link';
+        }
+
+        // Format date to time ago
+        function getTimeAgo(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const seconds = Math.floor((now - date) / 1000);
+            
+            let interval = Math.floor(seconds / 31536000);
+            if (interval >= 1) return interval + (interval === 1 ? ' year' : ' years') + ' ago';
+            
+            interval = Math.floor(seconds / 2592000);
+            if (interval >= 1) return interval + (interval === 1 ? ' month' : ' months') + ' ago';
+            
+            interval = Math.floor(seconds / 86400);
+            if (interval >= 1) return interval + (interval === 1 ? ' day' : ' days') + ' ago';
+            
+            interval = Math.floor(seconds / 3600);
+            if (interval >= 1) return interval + (interval === 1 ? ' hour' : ' hours') + ' ago';
+            
+            interval = Math.floor(seconds / 60);
+            if (interval >= 1) return interval + (interval === 1 ? ' minute' : ' minutes') + ' ago';
+            
+            return 'just now';
+        }
+
+        // Initialize categories filter with animations
+        function initCategories() {
+            categoriesFilter.innerHTML = categories.map((category, index) => `
+                <div class="category-pill ${category === 'all' ? 'active' : ''}" 
+                     data-category="${category}" 
+                     style="animation: fadeIn 0.3s forwards ${index * 0.05}s; opacity: 0; transform: translateY(5px);">
+                    ${category.charAt(0).toUpperCase() + category.slice(1)}
+                </div>
+            `).join('');
+
+            // Add event listeners to category pills
+            document.querySelectorAll('.category-pill').forEach(pill => {
+                pill.addEventListener('click', (e) => {
+                    // Remove active class from all pills
+                    document.querySelectorAll('.category-pill').forEach(p => {
+                        p.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked pill
+                    e.target.classList.add('active');
+                    
+                    // Update filter and re-render
+                    currentFilter = e.target.dataset.category;
+                    renderLinks();
+                });
+            });
+        }
+
+        // Handle form submission to add a new link
+        addLinkForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const title = document.getElementById('linkTitle').value.trim();
+            const url = document.getElementById('linkUrl').value.trim();
+            const category = document.getElementById('linkCategory').value;
+            
+            if (!title || !url || !category) return;
+            
+            // Disable submit button to prevent multiple submissions
+            const submitBtn = addLinkForm.querySelector('.submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+            
+            try {
+                const { data, error } = await supabaseClient
+                    .from('links')
+                    .insert([
+                        { 
+                            title, 
+                            url, 
+                            category, 
+                            upvotes: 0, 
+                            downvotes: 0 
+                        }
+                    ])
+                    .select();
+                
+                if (error) throw error;
+                
+                // Add new link to the links array
+                if (data && data.length > 0) {
+                    allLinks.unshift(data[0]);
+                    
+                    // Close modal and reset form
+                    addLinkModal.style.display = 'none';
+                    document.body.style.overflow = 'auto'; // Re-enable scrolling
+                    addLinkForm.reset();
+                    
+                    // Show success message
+                    const successMsg = document.createElement('div');
+                    successMsg.className = 'success-msg';
+                    successMsg.innerHTML = '<i class="fas fa-check-circle"></i> Link added successfully!';
+                    successMsg.style.position = 'fixed';
+                    successMsg.style.top = '20px';
+                    successMsg.style.left = '50%';
+                    successMsg.style.transform = 'translateX(-50%)';
+                    successMsg.style.padding = '15px 30px';
+                    successMsg.style.background = 'rgba(76, 175, 80, 0.9)';
+                    successMsg.style.color = 'white';
+                    successMsg.style.borderRadius = '50px';
+                    successMsg.style.zIndex = '100';
+                    successMsg.style.display = 'flex';
+                    successMsg.style.alignItems = 'center';
+                    successMsg.style.gap = '10px';
+                    document.body.appendChild(successMsg);
+                    
+                    // Remove success message after 3 seconds
+                    setTimeout(() => {
+                        successMsg.style.opacity = '0';
+                        successMsg.style.transition = 'opacity 0.3s';
+                        setTimeout(() => successMsg.remove(), 300);
+                    }, 3000);
+                    
+                    // Re-render links
+                    renderLinks();
+                }
+            } catch (error) {
+                console.error('Error adding link:', error);
+                alert('Failed to add link. Please try again.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Add to Collection';
+            }
+        });
+
+        // Handle votes with visual feedback
+        async function handleVote(e) {
+            const button = e.currentTarget;
+            const linkId = button.dataset.id;
+            const isUpvote = button.classList.contains('upvote');
+            const linkElement = document.querySelector(`.link-item[data-id="${linkId}"]`);
+            
+            // Add visual feedback
+            button.classList.add('voting');
+            button.querySelector('i').classList.add('fa-spin');
+            
+            // Get current vote status
+            const currentVote = userVotes[linkId];
+            
+            // Determine the vote type based on current status
+            let voteType;
+            if (!currentVote) {
+                // New vote
+                voteType = isUpvote ? 'upvote' : 'downvote';
+            } else if (currentVote === (isUpvote ? 'upvote' : 'downvote')) {
+                // Remove vote if clicking the same button again
+                voteType = 'remove';
+            } else {
+                // Change vote if clicking the opposite button
+                voteType = isUpvote ? 'upvote' : 'downvote';
+            }
+            
+            try {
+                // First get the current link data
+                const { data: currentLinkData, error: fetchError } = await supabaseClient
+                    .from('links')
+                    .select('*')
+                    .eq('id', linkId)
+                    .single();
+                
+                if (fetchError) throw fetchError;
+                if (!currentLinkData) throw new Error('Link not found');
+                
+                // Calculate new vote counts
+                let newUpvotes = currentLinkData.upvotes || 0;
+                let newDownvotes = currentLinkData.downvotes || 0;
+                
+                // Update counts based on vote type
+                if (voteType === 'remove') {
+                    if (currentVote === 'upvote') {
+                        newUpvotes = Math.max(0, newUpvotes - 1);
+                    } else {
+                        newDownvotes = Math.max(0, newDownvotes - 1);
+                    }
+                    delete userVotes[linkId];
+                } else if (voteType === 'upvote') {
+                    if (currentVote === 'downvote') {
+                        newDownvotes = Math.max(0, newDownvotes - 1);
+                    }
+                    newUpvotes += 1;
+                    userVotes[linkId] = 'upvote';
+                } else if (voteType === 'downvote') {
+                    if (currentVote === 'upvote') {
+                        newUpvotes = Math.max(0, newUpvotes - 1);
+                    }
+                    newDownvotes += 1;
+                    userVotes[linkId] = 'downvote';
+                }
+                
+                // Update the link with new vote counts
+                const { data: updatedLink, error: updateError } = await supabaseClient
+                    .from('links')
+                    .update({
+                        upvotes: newUpvotes,
+                        downvotes: newDownvotes
+                    })
+                    .eq('id', linkId)
+                    .select()
+                    .single();
+                
+                if (updateError) throw updateError;
+                
+                // Update UI to reflect the new vote counts with animation
+                if (updatedLink) {
+                    const upvoteBtn = linkElement.querySelector('.upvote');
+                    const downvoteBtn = linkElement.querySelector('.downvote');
+                    
+                    // Get the vote count text directly
+                    let upvoteText = upvoteBtn.textContent.trim();
+                    let downvoteText = downvoteBtn.textContent.trim();
+                    
+                    // Update the button text with new values
+                    upvoteBtn.innerHTML = `<i class="fas fa-arrow-up"></i> ${updatedLink.upvotes || 0}`;
+                    downvoteBtn.innerHTML = `<i class="fas fa-arrow-down"></i> ${updatedLink.downvotes || 0}`;
+                    
+                    // Add animation classes
+                    upvoteBtn.classList.add('count-change');
+                    downvoteBtn.classList.add('count-change');
+                    
+                    setTimeout(() => {
+                        upvoteBtn.classList.remove('count-change');
+                        downvoteBtn.classList.remove('count-change');
+                    }, 500);
+                    
+                    // Update the allLinks array
+                    const index = allLinks.findIndex(link => link.id === updatedLink.id);
+                    if (index !== -1) {
+                        allLinks[index] = updatedLink;
+                    }
+                }
+                
+                // Update UI to reflect the user's vote
+                updateVoteUI();
+                saveUserVotes();
+            } catch (error) {
+                console.error('Error handling vote:', error);
+                
+                // Show error message
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'error-msg';
+                errorMsg.innerHTML = '<i class="fas fa-exclamation-circle"></i> Failed to register vote';
+                errorMsg.style.position = 'fixed';
+                errorMsg.style.top = '20px';
+                errorMsg.style.left = '50%';
+                errorMsg.style.transform = 'translateX(-50%)';
+                errorMsg.style.padding = '15px 30px';
+                errorMsg.style.background = 'rgba(244, 67, 54, 0.9)';
+                errorMsg.style.color = 'white';
+                errorMsg.style.borderRadius = '50px';
+                errorMsg.style.zIndex = '100';
+                errorMsg.style.display = 'flex';
+                errorMsg.style.alignItems = 'center';
+                errorMsg.style.gap = '10px';
+                document.body.appendChild(errorMsg);
+                
+                // Remove error message after 3 seconds
+                setTimeout(() => {
+                    errorMsg.style.opacity = '0';
+                    errorMsg.style.transition = 'opacity 0.3s';
+                    setTimeout(() => errorMsg.remove(), 300);
+                }, 3000);
+            } finally {
+                // Remove visual feedback
+                button.classList.remove('voting');
+                button.querySelector('i').classList.remove('fa-spin');
+            }
+        }
+
+        // Update UI to reflect user votes with better visual indicators
+        function updateVoteUI() {
+            // Reset all vote buttons
+            document.querySelectorAll('.vote-btn').forEach(btn => {
+                btn.classList.remove('upvoted', 'downvoted');
+                
+                // Reset icons back to arrows
+                const icon = btn.querySelector('i');
+                if (btn.classList.contains('upvote')) {
+                    icon.className = 'fas fa-arrow-up';
+                } else if (btn.classList.contains('downvote')) {
+                    icon.className = 'fas fa-arrow-down';
+                }
+            });
+            
+            // Add classes based on user votes
+            Object.entries(userVotes).forEach(([linkId, voteType]) => {
+                const upvoteBtn = document.querySelector(`.upvote[data-id="${linkId}"]`);
+                const downvoteBtn = document.querySelector(`.downvote[data-id="${linkId}"]`);
+                
+                if (voteType === 'upvote' && upvoteBtn) {
+                    upvoteBtn.classList.add('upvoted');
+                    upvoteBtn.querySelector('i').className = 'fas fa-thumbs-up';
+                } else if (voteType === 'downvote' && downvoteBtn) {
+                    downvoteBtn.classList.add('downvoted');
+                    downvoteBtn.querySelector('i').className = 'fas fa-thumbs-down';
+                }
+            });
+        }
+
+        // Save user votes to localStorage
+        function saveUserVotes() {
+            localStorage.setItem('userVotes', JSON.stringify(userVotes));
+        }
+
+        // Load user votes from localStorage
+        function loadUserVotes() {
+            const savedVotes = localStorage.getItem('userVotes');
+            if (savedVotes) {
+                userVotes = JSON.parse(savedVotes);
+                updateVoteUI();
+            }
+        }
+
+        // Add styles for vote animations
+        const voteAnimationStyles = document.createElement('style');
+        voteAnimationStyles.textContent = `
+            .vote-btn.voting {
+                pointer-events: none;
+                opacity: 0.7;
+            }
+            
+            .count-change {
+                animation: pulse-count 0.5s ease;
+            }
+            
+            @keyframes pulse-count {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.5); }
+                100% { transform: scale(1); }
+            }
+        `;
+        document.head.appendChild(voteAnimationStyles);
+
+        // Initialize the app
+        initCategories();
+        fetchLinks();
+    </script>
+</body>
+</html> 
