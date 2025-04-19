@@ -1,993 +1,507 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Pulse - Connect, Share, Discover</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Links - Password Protected</title>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700&display=swap');
+
         :root {
-            --primary-color: #426eff; /* Twitter Blue */
-            --secondary-color: #14171A; /* Dark Twitter */
-            --accent-color: #426eff; /* Twitter Blue */
-            --background-color: #15202B; /* Twitter Dark Mode Background */
-            --text-color: #FFFFFF; /* White */
-            --light-text-color: #8899A6; /* Twitter Light Gray */
-            --card-background: #192734; /* Twitter Card Background */
-            --border-color: #38444D; /* Twitter Border Color */
-            --shadow-color: rgba(0, 0, 0, 0.2); /* Subtle Shadow */
-            --hover-color: #1A2836; /* Hover effect color */
+            --primary-color: #9d4edd;
+            --secondary-color: #3a0ca3;
+            --accent-color: #7b2cbf;
+            --text-color: #f8f9fa;
+            --bg-dark: #0f0a1e;
+            --bg-light: #1a1333;
+            --success-color: #4ade80;
+            --error-color: #ef4444;
+            --card-bg: rgba(26, 19, 51, 0.7);
+            --glass-effect: rgba(255, 255, 255, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            height: 100%;
+            overflow: hidden;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--background-color);
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark), #200c52);
             color: var(--text-color);
-            line-height: 1.6;
-        }
-
-        /* Utility Classes */
-        .container {
-            width: 100%;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 0;
-            background-color: var(--background-color);
-            border-radius: 0;
-            box-shadow: none;
-            border: none;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        /* Header Styles */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border-color);
-            position: sticky;
-            top: 0;
-            background-color: var(--background-color);
-            z-index: 100;
-        }
-
-        .header h1 {
-            margin: 0;
-            color: var(--text-color);
-            font-size: 1.2rem;
-            font-weight: 700;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-        }
-
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background-color: var(--primary-color);
-            color: #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-right: 10px;
-            font-weight: bold;
-        }
-
-        .user-dropdown {
+            height: 100%;
             position: relative;
-        }
-
-        .user-button {
-            background-color: transparent;
-            color: var(--text-color);
-            border: none;
-            padding: 8px;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            display: flex;
-            align-items: center;
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        .user-button:hover {
-            background-color: rgba(29, 161, 242, 0.1);
-        }
-
-        .dropdown-content {
-            position: absolute;
-            right: 0;
-            background-color: var(--card-background);
-            min-width: 200px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-            z-index: 1;
-            border-radius: 4px;
             overflow: hidden;
-            display: none;
-            margin-top: 10px;
-            border: 1px solid var(--border-color);
+            margin: 0;
+            padding: 0;
         }
 
-        .dropdown-content a {
-            color: var(--text-color);
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-            transition: background-color 0.2s;
-            font-size: 15px;
+        /* Enhanced star field */
+        #stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
         }
 
-        .dropdown-content a:hover {
-            background-color: var(--hover-color);
-        }
-
-        .show {
-            display: block;
-        }
-
-        /* Post Styles */
-        .post {
-            padding: 16px;
-            border-bottom: 1px solid var(--border-color);
-            background-color: var(--background-color);
-            transition: background-color 0.2s;
-            margin-bottom: 0;
-            border-radius: 0;
-            box-shadow: none;
-            border-left: none;
-            border-right: none;
-        }
-
-        .post:hover {
-            background-color: var(--hover-color);
-            transform: none;
-        }
-
-        .post-header {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 10px;
-        }
-
-        .post-author {
-            font-weight: 700;
-            color: var(--text-color);
-            font-size: 15px;
-            margin-right: 5px;
-        }
-
-        .post-date {
-            font-size: 14px;
-            color: var(--light-text-color);
-        }
-
-        .post-content {
-            line-height: 1.5;
-            margin-bottom: 12px;
-            font-size: 15px;
-            word-wrap: break-word;
-        }
-
-        /* Button Styles */
-        .like-button,
-        .comment-button,
-        .event-button {
-            background-color: transparent;
-            color: var(--light-text-color);
-            border: none;
-            padding: 8px;
+        .star {
+            position: absolute;
             border-radius: 50%;
-            cursor: pointer;
-            transition: color 0.2s, background-color 0.2s;
-            font-size: 14px;
-            display: inline-flex;
-            align-items: center;
-            margin-right: 12px;
+            background-color: rgba(255, 255, 255, 0.8);
+            filter: blur(0.5px);
+            animation: twinkle var(--duration) ease-in-out infinite;
         }
 
-        .like-button:hover,
-        .comment-button:hover,
-        .event-button:hover {
-            background-color: rgba(29, 161, 242, 0.1);
-            color: var(--primary-color);
-            transform: none;
-            box-shadow: none;
+        .shooting-star {
+            position: absolute;
+            width: 100px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #fff, transparent);
+            animation: shootingStar 6s linear infinite;
+            opacity: 0;
+            transform: rotate(-45deg);
+            z-index: -1;
+            overflow: hidden;
         }
 
-        .like-count {
-            margin-left: 5px;
-            color: var(--light-text-color);
-            font-size: 13px;
+        @keyframes shootingStar {
+            0% {
+                transform: translate(0, 0) rotate(-45deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            20% {
+                transform: translate(-200px, 200px) rotate(-45deg);
+                opacity: 0;
+            }
+            100% {
+                transform: translate(-200px, 200px) rotate(-45deg);
+                opacity: 0;
+            }
         }
 
-        .comment-button {
-            background-color: transparent;
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
         }
 
-        .comment-button:hover {
-            background-color: rgba(29, 161, 242, 0.1);
-        }
-
-        /* New Post Form */
-        .new-post-form {
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border-color);
-            background-color: var(--background-color);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .new-post-form textarea {
-            width: 100%;
-            padding: 12px 0;
-            margin-bottom: 12px;
-            border: none;
-            box-sizing: border-box;
-            font-size: 19px;
-            background-color: transparent;
-            color: var(--text-color);
-            resize: none;
-            font-family: inherit;
-            outline: none;
-            min-height: 80px;
-        }
-
-        .new-post-form textarea::placeholder {
-            color: var(--light-text-color);
-        }
-
-        .new-post-form button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: bold;
-            transition: background-color 0.2s;
-            align-self: flex-end;
-            min-width: 80px;
-        }
-
-        .new-post-form button:hover {
-            background-color: #1991DB;
-        }
-
-        /* Comments Section */
-        .comments-section {
-            margin-top: 8px;
-            padding-left: 16px;
-            border-left: 2px solid var(--border-color);
-            margin-left: 16px;
-        }
-
-        .comment {
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 8px;
-            margin-bottom: 8px;
-        }
-
-        .comment:last-child {
-            border-bottom: none;
-        }
-
-        .comment-author {
-            font-size: 14px;
-            font-weight: 700;
-            margin-right: 5px;
-            color: var(--text-color);
-        }
-
-        .comment-date {
-            font-size: 13px;
-            color: var(--light-text-color);
-        }
-
-        .comment-content {
-            font-size: 14px;
-            color: var(--text-color);
-            line-height: 1.4;
-        }
-
-        /* Reply Form */
-        .reply-form {
-            margin-top: 8px;
-            width: 90%;
-        }
-
-        .reply-form textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            resize: none;
-            font-size: 14px;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            outline: none;
-            transition: border-color 0.3s;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        .reply-form textarea:focus {
-            border-color: var(--primary-color);
-        }
-
-        .reply-form button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: bold;
-            transition: background-color 0.2s;
-            margin-top: 8px;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-
-        }
-
-        .reply-form button:hover {
-            background-color: var(--accent-color);
-        }
-
-        /* Auth Styles */
-        .auth-container {
-            width: 100%;
-            max-width: 400px;
-            margin: 50px auto;
-            background-color: var(--card-background);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-            border: 1px solid var(--border-color);
-        }
-
-        .auth-container h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: var(--text-color);
-            font-size: 23px;
-        }
-
-        .auth-container label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--text-color);
-            font-size: 15px;
-        }
-
-        .auth-container input[type="text"],
-        .auth-container input[type="password"] {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 16px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 15px;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            transition: border-color 0.3s;
-        }
-
-        .auth-container input[type="text"]:focus,
-        .auth-container input[type="password"]:focus {
-            border-color: var(--primary-color);
-            outline: none;
-        }
-
-        .auth-container button {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 30px;
-            cursor: pointer;
-            width: 100%;
-            font-size: 15px;
-            font-weight: bold;
-            transition: background-color 0.2s;
-        }
-
-        .auth-container button:hover {
-            background-color: #1991DB;
-        }
-
-        .auth-container .error-message {
-            color: #E0245E;
-            margin-top: 10px;
-            text-align: center;
-            font-size: 14px;
-        }
-
-        .auth-container p {
-            text-align: center;
-            margin-top: 16px;
-            color: var(--light-text-color);
-            font-size: 14px;
-        }
-
-        .auth-container a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .auth-container a:hover {
-            text-decoration: underline;
-        }
-
-        .loading-spinner {
-            border: 3px solid var(--border-color);
-            border-top: 3px solid var(--primary-color);
+        /* Cosmic nebula effect */
+        .nebula {
+            position: fixed;
             border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 0.8s linear infinite;
+            filter: blur(90px);
+            opacity: 0.15;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        .nebula-1 {
+            background: radial-gradient(circle, #9d4edd, transparent);
+            width: 500px;
+            height: 500px;
+            top: -100px;
+            left: -100px;
+        }
+
+        .nebula-2 {
+            background: radial-gradient(circle, #5390d9, transparent);
+            width: 700px;
+            height: 700px;
+            bottom: -200px;
+            right: -100px;
+        }
+
+        /* Login container */
+        .login-container {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            z-index: 1;
         }
 
-        @keyframes spin {
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(123, 44, 191, 0.1), transparent 70%);
+            z-index: -1;
+            animation: rotateGradient 20s linear infinite;
+        }
+
+        @keyframes rotateGradient {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
 
-        /* Make scrolling smoother */
-        html {
-            scroll-behavior: smooth;
+        .login-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: transparent;
+            background: linear-gradient(135deg, #c77dff, #7b2cbf);
+            background-clip: text;
+            -webkit-background-clip: text;
+            letter-spacing: 2px;
+            position: relative;
+            display: inline-block;
         }
 
-        /* Custom Scroll Bars - minimal style like Twitter */
-        ::-webkit-scrollbar {
-            width: 4px;
-            background: transparent;
+        .login-title::after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
-        ::-webkit-scrollbar-track {
-            background: var(--background-color);
+        .login-subtitle {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 30px;
         }
 
-        ::-webkit-scrollbar-thumb {
-            background: var(--border-color);
-            border-radius: 4px;
+        .pin-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 35px;
         }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--light-text-color);
+        .pin-input {
+            width: 60px;
+            height: 70px;
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 600;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            transition: all 0.3s;
         }
 
-        /* Media Queries for better mobile experience */
-        @media (max-width: 600px) {
-            .container {
-                width: 100%;
-                margin: 0;
-                border-radius: 0;
+        .pin-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(123, 44, 191, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-3px);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(123, 44, 191, 0.3);
+            font-family: 'Exo 2', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.7s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(123, 44, 191, 0.4);
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* Footer credit */
+        .footer-credit {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(26, 19, 51, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 12px 30px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s ease;
+            z-index: 10;
+        }
+
+        .footer-credit a {
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .footer-credit:hover {
+            transform: translateX(-50%) translateY(-8px);
+            box-shadow: 0 15px 40px rgba(123, 44, 191, 0.3);
+            border-color: rgba(255, 255, 255, 0.25);
+            background: rgba(58, 12, 163, 0.8);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 20px;
             }
             
-            .auth-container {
-                width: 90%;
-                margin: 20px auto;
+            .login-title {
+                font-size: 2rem;
+            }
+            
+            .pin-input {
+                width: 50px;
+                height: 60px;
+                font-size: 1.7rem;
             }
         }
 
-        .liked {
-            background-color: var(--primary-color);
-            color: white; /* Change text color to white for better contrast */
-        }
-
-        .footer {
-            background-color: var(--background-color);
-            color: var(--light-text-color);
-            text-align: center;
-            padding: 10px 0;
+        .tooltip {
             position: relative;
-            bottom: 0;
-            width: 100%;
-            border-top: 1px solid var(--border-color);
+            display: inline-block;
+            cursor: pointer;
+            margin-left: 10px;
         }
 
-        .footer a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: bold;
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 160px;
+            background-color: rgba(26, 19, 51, 0.8);
+            color: var(--text-color);
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -80px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .footer a:hover {
-            text-decoration: underline;
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .tooltip .tooltiptext:hover {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .tooltip i {
+            color: var(--accent-color);
         }
     </style>
 </head>
 <body>
+    <!-- Star field background -->
+    <div id="stars-container"></div>
+    
+    <!-- Cosmic nebula effects -->
+    <div class="nebula nebula-1"></div>
+    <div class="nebula nebula-2"></div>
+    
+    <!-- Shooting stars - contained within the viewport -->
+    <div class="shooting-star" style="top: 15%; left: 60%; max-width: 100%; max-height: 100%;"></div>
+    <div class="shooting-star" style="top: 40%; left: 10%; max-width: 100%; max-height: 100%;"></div>
+    <div class="shooting-star" style="top: 70%; left: 80%; max-width: 100%; max-height: 100%;"></div>
 
-<div class="container">
-    <div class="header">
-        <h1>Pulse</h1>
-        <div class="user-info">
-            <div class="user-avatar" id="userAvatar" onclick="toggleDropdown(event)"></div>
-            <div class="user-dropdown">
-                <button class="user-button" onclick="toggleDropdown(event)"><span id="usernameDisplay"></span> ▼</button>
-                <div id="userDropdown" class="dropdown-content">
-                    <a href="#" onclick="logout()">Logout</a>
-                </div>
-            </div>
+    <div class="login-container">
+        <h1 class="login-title">Cosmic Links</h1>
+        <div class="tooltip">
+            <i class="fas fa-question-circle"></i>
+            <span class="tooltiptext">What is the greatest app ever created? (hint: it was used to make this)</span>
         </div>
+        <p class="login-subtitle">Enter the access code to continue</p>
+
+        <div class="pin-container">
+            <input type="password" class="pin-input" maxlength="1" data-index="1">
+            <input type="password" class="pin-input" maxlength="1" data-index="2">
+            <input type="password" class="pin-input" maxlength="1" data-index="3">
+            <input type="password" class="pin-input" maxlength="1" data-index="4">
+        </div>
+        <button class="submit-btn" onclick="checkPassword()">
+            <i class="fas fa-unlock-alt"></i> Unlock Access
+        </button>
+    </div>
+    
+    <div class="footer-credit">
+        <a href="https://seeksimpler.com" target="_blank">
+            <i class="fas fa-code"></i> Coded by Seek
+        </a>
     </div>
 
-    <div id="authSection">
-    </div>
-
-    <div id="loadingSpinner" class="loading-spinner hidden"></div>
-
-    <div id="contentSection" class="hidden">
-        <div class="new-post-form">
-            <textarea id="newPostText" placeholder="What's on your mind?"></textarea>
-            <button onclick="createPost()">Post</button>
-        </div>
-
-        <div id="posts">
-        </div>
-    </div>
-
-</div>
-
-<div class="footer">
-    <p>Made with ❤️ using <a href="https://seeksimpler.com" target="_blank">Seek</a></p>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-    // Declare all variables at the top
-    const SUPABASE_URL = 'https://aqjzqzccqhrmekyagmip.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxanpxemNjcWhybWVreWFnbWlwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ1NzEyMDcsImV4cCI6MjA2MDE0NzIwN30.E-2jlso6AnOSkXBs5ihgmZbb0fOqdDVsUIIhagGHQes';
-
-    // Initialize the Supabase client
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    // Initialize variables that will be used globally
-    let currentUser = null;
-    let postsChannel = null; // Initialize postsChannel to null
-
-    async function loadInitialData() {
-        try {
-            await loadUser();
-            await renderAuthSection();
-
-            if (currentUser) {
-                await loadPosts();
-                renderPosts();
-                setupRealtime(); // Add this line
-            }
-        } catch (error) {
-            console.error("Initialization error:", error);
-            alert("Failed to load application. Please refresh.");
-        }
-    }
-
-    async function loadUser() {
-        const { data: { user } } = await supabaseClient.auth.getUser();
-        currentUser = user;
-    }
-
-    // Account Management
-
-    async function renderAuthSection() {
-        const authSection = document.getElementById('authSection');
-        const contentSection = document.getElementById('contentSection');
-        if (currentUser) {
-            contentSection.classList.remove('hidden');
-            authSection.style.display = 'none';
-            document.getElementById('usernameDisplay').textContent = currentUser.email;
-            document.getElementById('userAvatar').textContent = currentUser.email.charAt(0).toUpperCase(); // Display first letter in avatar
-        } else {
-            contentSection.classList.add('hidden');
-            authSection.style.display = 'block';
-            authSection.innerHTML = `
-            <div class="auth-container">
-                <h2>Login to Pulse</h2>
-                <label for="loginEmail">Email:</label>
-                <input type="text" id="loginEmail">
-                <label for="loginPassword">Password:</label>
-                <input type="password" id="loginPassword">
-                <button onclick="login()">Login</button>
-                <p>New to Pulse? <a href="#" onclick="renderSignupForm()">Sign up</a></p>
-                <div id="loginError" class="error-message"></div>
-            </div>
-        `;
-        }
-    }
-
-    function renderSignupForm() {
-        const authSection = document.getElementById('authSection');
-        authSection.innerHTML = `
-        <div class="auth-container">
-            <h2>Join Pulse!</h2>
-            <label for="signupEmail">Email:</label>
-            <input type="text" id="signupEmail">
-            <label for="signupPassword">Password:</label>
-            <input type="password" id="signupPassword">
-            <button onclick="signup()">Sign Up</button>
-            <p>Already buzzing? <a href="#" onclick="renderAuthSection()">Login</a></p>
-            <div id="signupError" class="error-message"></div>
-        </div>
-    `;
-    }
-
-    async function signup() {
-        const email = document.getElementById('signupEmail').value;
-        const password = document.getElementById('signupPassword').value;
-        const errorDiv = document.getElementById('signupError');
-
-        if (!email || !password) {
-            errorDiv.textContent = "Please enter both email and password.";
-            return;
-        }
-
-        const { data, error } = await supabaseClient.auth.signUp({
-            email: email,
-            password: password,
-        });
-
-        if (error) {
-            errorDiv.textContent = error.message;
-            return;
-        }
-
-        currentUser = data.user;
-        await renderAuthSection();
-        await loadPosts();
-        renderPosts();
-
-    }
-
-    async function login() {
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
-    const errorDiv = document.getElementById('loginError');
-
-    if (!email || !password) {
-        errorDiv.textContent = "Please enter both email and password.";
-        return;
-    }
-
-    try {
-        const { data, error } = await supabaseClient.auth.signInWithPassword({
-            email: email,
-            password: password,
-        });
-
-        if (error) throw error;
-        
-        currentUser = data.user;
-        await renderAuthSection();
-        await loadPosts();
-        renderPosts();
-    } catch (error) {
-        errorDiv.textContent = error.message || "Login failed. Please try again.";
-        console.error("Login error:", error);
-    }
-}
-
-    async function logout() {
-        // Remove realtime subscription
-        if (postsChannel) {
-            await supabaseClient.removeChannel(postsChannel);
-        }
-        
-        await supabaseClient.auth.signOut();
-        currentUser = null;
-        await renderAuthSection();
-        document.getElementById('contentSection').classList.add('hidden');
-    }
-
-
-    function toggleDropdown(event) {
-        event.stopPropagation(); // Prevent the click event from bubbling up
-        document.getElementById("userDropdown").classList.toggle("show");
-    }
-
-    // Close the dropdown if the user clicks outside of it
-    window.onclick = function(event) {
-        if (!event.target.matches('.user-button') && !event.target.closest('.user-info')) {
-            var dropdowns = document.getElementsByClassName("dropdown-content");
-            for (let i = 0; i < dropdowns.length; i++) {
-                var openDropdown = dropdowns[i];
-                if (openDropdown.classList.contains('show')) {
-                    openDropdown.classList.remove('show');
+    <script>
+        // Create stars animation with different sizes
+        function createStars() {
+            const starsContainer = document.getElementById('stars-container');
+            starsContainer.innerHTML = ''; // Clear existing stars
+            
+            // Create different size stars for more dynamic effect
+            for (let i = 0; i < 250; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                // Random position
+                star.style.top = Math.random() * 100 + '%';
+                star.style.left = Math.random() * 100 + '%';
+                
+                // Random size (1-3px)
+                const size = Math.random() * 2 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                
+                // Random animation delays and durations
+                star.style.animationDelay = Math.random() * 5 + 's';
+                star.style.animationDuration = Math.random() * 15 + 5 + 's';
+                star.style.setProperty('--duration', Math.random() * 15 + 5 + 's');
+                
+                // Brighter stars occasionally
+                if (Math.random() > 0.8) {
+                    star.style.boxShadow = `0 0 ${Math.random() * 6 + 2}px rgba(255, 255, 255, 0.8)`;
                 }
-            }
-        }
-    }
-
-
-    async function createPost() {
-        const newPostText = document.getElementById('newPostText').value;
-        if (newPostText.trim() !== "") {
-            const newPost = {
-                author: currentUser.email,
-                content: newPostText,
-                created_at: new Date().toISOString(),
-                user_id: currentUser.id
-            };
-
-            const { data, error } = await supabaseClient
-                .from('posts')
-                .insert([newPost]);
-
-            if (error) {
-                console.error('Error creating post:', error);
-                return;
-            }
-
-            // Dynamically update the posts without reloading
-            await loadPosts();
-            renderPosts();
-            document.getElementById('newPostText').value = ""; // Clear the textarea
-        }
-    }
-
-
-    function setupRealtime() {
-      // Remove existing channel if it exists
-      if (postsChannel) {
-        supabaseClient.removeChannel(postsChannel);
-      }
-
-      // Subscribe to posts changes
-      postsChannel = supabaseClient
-        .channel('posts_changes')
-        .on(
-          'postgres_changes',
-          {
-            event: '*', // Listen to all changes (INSERT, UPDATE, DELETE)
-            schema: 'public',
-            table: 'posts'
-          },
-          () => {
-            // Debounce to prevent rapid refreshes
-            debouncedRefreshPosts();
-          }
-        )
-        .subscribe();
-      const commentsChannel = supabaseClient
-        .channel('comments_changes')
-        .on(
-          'postgres_changes',
-          {
-            event: '*',
-            schema: 'public',
-            table: 'comments'
-          },
-          () => {
-            debouncedRefreshPosts();
-          }
-        )
-        .subscribe();
-
-      return () => {
-        supabaseClient.removeChannel(postsChannel);
-        supabaseClient.removeChannel(commentsChannel);
-      };
-    }
-
-    // Debounce function to prevent too many rapid refreshes
-    let refreshTimeout;
-    function debouncedRefreshPosts() {
-      clearTimeout(refreshTimeout);
-      refreshTimeout = setTimeout(async () => {
-        await loadPosts();
-        renderPosts();
-      }, 500); // Wait 500ms after last change
-    }
-
-
-    async function likePost(postId) {
-        // Fetch existing likes for the post from Supabase
-        const { data: existingLikes, error: fetchError } = await supabaseClient
-            .from('likes')
-            .select('*')
-            .eq('post_id', postId)
-            .eq('user_id', currentUser.id);
-
-        if (fetchError) {
-            console.error('Error fetching likes:', fetchError);
-            return;
-        }
-
-        if (existingLikes && existingLikes.length > 0) {
-            // User already liked the post, so unlike it
-            const { error: deleteError } = await supabaseClient
-                .from('likes')
-                .delete()
-                .eq('post_id', postId)
-                .eq('user_id', currentUser.id);
-
-            if (deleteError) {
-                console.error('Error unliking post:', deleteError);
-                return;
-            }
-        } else {
-            // User hasn't liked the post, so like it
-            const { error: insertError } = await supabaseClient
-                .from('likes')
-                .insert([{ post_id: postId, user_id: currentUser.id }]);
-
-            if (insertError) {
-                console.error('Error liking post:', insertError);
-                return;
+                
+                starsContainer.appendChild(star);
             }
         }
 
+        createStars();
+        
+        // Recreate stars when window is resized
+        window.addEventListener('resize', createStars);
 
-        await loadPosts();
-        renderPosts();
-    }
-
-
-    async function addComment(postId, commentText) {
-        const newComment = {
-            post_id: postId,
-            author: currentUser.email,
-            content: commentText,
-            created_at: new Date().toISOString(),
-            user_id: currentUser.id
-        };
-
-
-        const { data, error } = await supabaseClient
-            .from('comments')
-            .insert([newComment]);
-
-        if (error) {
-            console.error('Error adding comment:', error);
-            return;
-        }
-
-
-        await loadPosts();
-        renderPosts();
-    }
-
-    async function renderComments(postId) {
-        const { data: comments, error } = await supabaseClient
-            .from('comments')
-            .select('*')
-            .eq('post_id', postId)
-            .order('created_at', { ascending: true });
-
-        if (error) {
-            console.error('Error fetching comments:', error);
-            return '';
-        }
-
-
-        let commentsHTML = '';
-        comments.forEach(comment => {
-            commentsHTML += `
-                <div class="comment">
-                    <span class="comment-author">${comment.author}</span>
-                    <span class="comment-date">${new Date(comment.created_at).toLocaleString()}</span>
-                    <p class="comment-content">${comment.content}</p>
-                </div>
-            `;
+        // Set up pin input fields
+        const pinInputs = document.querySelectorAll('.pin-input');
+        
+        pinInputs.forEach((input, index) => {
+            // Auto-focus next input when a digit is entered
+            input.addEventListener('input', (e) => {
+                if (e.target.value.length === 1) {
+                    if (index < pinInputs.length - 1) {
+                        pinInputs[index + 1].focus();
+                    } else {
+                        // If last input is filled, unfocus it
+                        input.blur();
+                    }
+                }
+            });
+            
+            // Handle backspace to go to previous input
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && e.target.value.length === 0) {
+                    if (index > 0) {
+                        pinInputs[index - 1].focus();
+                    }
+                }
+            });
         });
 
-        return commentsHTML;
-    }
-
-
-    let posts = [];
-
-    async function loadPosts() {
-        // Show the loading spinner
-        document.getElementById('loadingSpinner').classList.remove('hidden');
-
-        const { data, error } = await supabaseClient
-            .from('posts')
-            .select('*')
-            .order('created_at', { ascending: false });
-
-        // Hide the loading spinner
-        document.getElementById('loadingSpinner').classList.add('hidden');
-
-        if (error) {
-            console.error('Error fetching posts:', error);
-            return;
-        }
-
-        posts = data;
-    }
-
-
-    async function renderPosts() {
-          const postsContainer = document.getElementById('posts');
-  
-          // Store current scroll position
-          const scrollPosition = window.scrollY;
-          postsContainer.innerHTML = "";
-
-        for (const post of posts) {
-            const postDiv = document.createElement('div');
-            postDiv.classList.add('post');
-
-            const postId = post.id;
-
-
-            const { data: likes, error: likesError } = await supabaseClient
-                .from('likes')
-                .select('*')
-                .eq('post_id', postId);
-
-            if (likesError) {
-                console.error('Error fetching likes:', likesError);
+        function checkPassword() {
+            let pin = '';
+            pinInputs.forEach(input => {
+                pin += input.value;
+            });
+            
+            pin = pin.toLowerCase(); // Convert input to lowercase for case-insensitive comparison
+            
+            const submitBtn = document.querySelector('.submit-btn');
+            
+            if (pin === "seek") { // Replace with your desired password
+                // Show loading state
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Unlocking...';
+                
+                // Redirect after a short delay for visual feedback
+                setTimeout(() => {
+                    window.location.href = "success.html";
+                }, 1000);
+            } else {
+                // Visual feedback for incorrect password
+                submitBtn.innerHTML = '<i class="fas fa-times-circle"></i> Invalid Code';
+                submitBtn.style.background = 'linear-gradient(135deg, #ef4444, #991b1b)';
+                
+                pinInputs.forEach(input => {
+                    input.style.borderColor = 'rgba(239, 68, 68, 0.7)';
+                    input.style.boxShadow = '0 0 10px rgba(239, 68, 68, 0.5)';
+                    
+                    // Reset visual feedback after a delay
+                    setTimeout(() => {
+                        input.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                        input.style.boxShadow = 'none';
+                        input.value = '';
+                    }, 1200);
+                });
+                
+                // Reset button after a delay
+                setTimeout(() => {
+                    submitBtn.innerHTML = '<i class="fas fa-unlock-alt"></i> Unlock Access';
+                    submitBtn.style.background = 'linear-gradient(135deg, var(--primary-color), var(--secondary-color))';
+                    submitBtn.disabled = false;
+                    
+                    // Focus on first input after clearing
+                    pinInputs[0].focus();
+                }, 1500);
             }
-
-            const likeCount = likes ? likes.length : 0;
-
-            // Check if the current user has liked the post
-            const userLiked = likes && likes.some(like => like.user_id === currentUser.id);
-
-            let likeButtonClass = 'like-button';
-            let likeButtonText = userLiked ? '<i class="fas fa-thumbs-up" style="color: var(--primary-color);"></i>' : '<i class="fas fa-thumbs-up"></i>';
-
-            let buttonsHTML = `
-                <button class="${likeButtonClass}" onclick="likePost(${postId})">${likeButtonText}</button>
-                <span class="like-count">${likeCount}</span>
-                <button class="comment-button" style="margin-left: 20px;" onclick="toggleCommentForm(${postId})"><i class="fas fa-comment"></i></button>
-            `;
-
-            postDiv.innerHTML = `
-                <div class="post-header">
-                    <div class="post-author">${post.author}</div>
-                    <div class="post-date">${new Date(post.created_at).toLocaleString()}</div>
-                </div>
-                <div class="post-content">${post.content}</div>
-                <div>
-                    ${buttonsHTML}
-                </div>
-
-                <div id="commentForm-${postId}" class="reply-form" style="display:none;">
-                    <textarea id="commentText-${postId}" placeholder="Write a comment..."></textarea>
-                    <button onclick="addComment(${postId}, document.getElementById('commentText-${postId}').value)">Post Comment</button>
-                </div>
-
-                <div class="comments-section">
-                    ${await renderComments(postId)}
-                </div>
-            `;
-
-            postsContainer.appendChild(postDiv);
         }
-        window.scrollTo(0, scrollPosition);
-
-    }
-
-
-    function toggleCommentForm(postId) {
-        const commentForm = document.getElementById(`commentForm-${postId}`);
-        commentForm.style.display = commentForm.style.display === 'none' ? 'block' : 'none';
-    }
-
-    // Initial render
-    loadInitialData();
-</script>
-
+    </script>
 </body>
 </html>
