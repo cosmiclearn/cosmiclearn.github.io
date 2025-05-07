@@ -1,507 +1,422 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cosmic Links - Password Protected</title>
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700&display=swap');
+<title>Math Quiz</title>
+<style>
+/* Modern Quiz App Styling with Glassmorphism */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
-        :root {
-            --primary-color: #9d4edd;
-            --secondary-color: #3a0ca3;
-            --accent-color: #7b2cbf;
-            --text-color: #f8f9fa;
-            --bg-dark: #0f0a1e;
-            --bg-light: #1a1333;
-            --success-color: #4ade80;
-            --error-color: #ef4444;
-            --card-bg: rgba(26, 19, 51, 0.7);
-            --glass-effect: rgba(255, 255, 255, 0.06);
-        }
+:root {
+  --primary: #3a86ff;
+  --primary-hover: #2667cc;
+  --secondary: #8338ec;
+  --success: #38b000;
+  --success-hover: #2d9000;
+  --text-dark: #1e1e2f;
+  --text-light: #adb5bd;
+  --background: #eef2f3;
+  --card-bg: rgba(255, 255, 255, 0.15);
+  --border-radius: 16px;
+  --box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+  --backdrop-blur: blur(20px);
+  --transition: all 0.3s ease;
+}
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-        html {
-            height: 100%;
-            overflow: hidden;
-        }
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--text-dark);
+  line-height: 1.6;
+  overflow: hidden;
+}
 
-        body {
-            font-family: 'Exo 2', sans-serif;
-            background: linear-gradient(135deg, var(--bg-dark), #200c52);
-            color: var(--text-color);
-            height: 100%;
-            position: relative;
-            overflow: hidden;
-            margin: 0;
-            padding: 0;
-        }
+.quiz-container {
+  width: 90%;
+  max-width: 650px;
+  margin: 30px auto;
+  background: var(--card-bg);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  padding: 40px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  animation: fadeIn 0.6s ease-out;
+}
 
-        /* Enhanced star field */
-        #stars-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: -1;
-        }
+.quiz-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 6px;
+  width: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+}
 
-        .star {
-            position: absolute;
-            border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.8);
-            filter: blur(0.5px);
-            animation: twinkle var(--duration) ease-in-out infinite;
-        }
+h1 {
+  color: var(--primary);
+  margin-bottom: 25px;
+  font-weight: 700;
+  font-size: 34px;
+  letter-spacing: -0.5px;
+  position: relative;
+  display: inline-block;
+}
 
-        .shooting-star {
-            position: absolute;
-            width: 100px;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #fff, transparent);
-            animation: shootingStar 6s linear infinite;
-            opacity: 0;
-            transform: rotate(-45deg);
-            z-index: -1;
-            overflow: hidden;
-        }
+h1::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 3px;
+  background-color: var(--secondary);
+  border-radius: 3px;
+}
 
-        @keyframes shootingStar {
-            0% {
-                transform: translate(0, 0) rotate(-45deg);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-            }
-            20% {
-                transform: translate(-200px, 200px) rotate(-45deg);
-                opacity: 0;
-            }
-            100% {
-                transform: translate(-200px, 200px) rotate(-45deg);
-                opacity: 0;
-            }
-        }
+p#question {
+  font-size: 22px;
+  margin-bottom: 30px;
+  color: var(--text-dark);
+  font-weight: 500;
+  padding: 0 10px;
+}
 
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.2; }
-            50% { opacity: 1; }
-        }
+.input-group {
+  position: relative;
+  margin-bottom: 30px;
+}
 
-        /* Cosmic nebula effect */
-        .nebula {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(90px);
-            opacity: 0.15;
-            z-index: -2;
-            pointer-events: none;
-        }
+input#answer {
+  padding: 15px 20px;
+  font-size: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  width: 85%;
+  max-width: 350px;
+  background-color: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  color: var(--text-dark);
+  font-family: 'Poppins', sans-serif;
+  transition: var(--transition);
+}
 
-        .nebula-1 {
-            background: radial-gradient(circle, #9d4edd, transparent);
-            width: 500px;
-            height: 500px;
-            top: -100px;
-            left: -100px;
-        }
+input#answer:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(58, 134, 255, 0.25);
+  background-color: rgba(255, 255, 255, 0.45);
+}
 
-        .nebula-2 {
-            background: radial-gradient(circle, #5390d9, transparent);
-            width: 700px;
-            height: 700px;
-            bottom: -200px;
-            right: -100px;
-        }
+button {
+  padding: 14px 28px;
+  font-size: 18px;
+  font-weight: 600;
+  background: linear-gradient(to right, var(--primary), var(--secondary));
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  font-family: 'Poppins', sans-serif;
+  letter-spacing: 0.5px;
+}
 
-        /* Login container */
-        .login-container {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: var(--card-bg);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
-            padding: 40px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            width: 90%;
-            max-width: 450px;
-            text-align: center;
-            z-index: 1;
-        }
+button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(to right, var(--primary-hover), var(--secondary));
+}
 
-        .login-container::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(123, 44, 191, 0.1), transparent 70%);
-            z-index: -1;
-            animation: rotateGradient 20s linear infinite;
-        }
+button:active {
+  transform: scale(0.98);
+}
 
-        @keyframes rotateGradient {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+/* Responsive Design */
+@media (max-width: 768px) {
+  .quiz-container {
+    width: 95%;
+    padding: 30px 20px;
+  }
 
-        .login-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: transparent;
-            background: linear-gradient(135deg, #c77dff, #7b2cbf);
-            background-clip: text;
-            -webkit-background-clip: text;
-            letter-spacing: 2px;
-            position: relative;
-            display: inline-block;
-        }
+  h1 {
+    font-size: 26px;
+  }
 
-        .login-title::after {
-            content: '';
-            position: absolute;
-            width: 40px;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
-            bottom: -8px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
+  p#question {
+    font-size: 18px;
+  }
 
-        .login-subtitle {
-            font-size: 1rem;
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 30px;
-        }
+  input#answer {
+    width: 100%;
+  }
+}
 
-        .pin-container {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 35px;
-        }
+/* Smooth Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.hint-container {
+    position: relative;
+  }
 
-        .pin-input {
-            width: 60px;
-            height: 70px;
-            text-align: center;
-            font-size: 2rem;
-            font-weight: 600;
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(255, 255, 255, 0.05);
-            color: white;
-            transition: all 0.3s;
-        }
+  .hint {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 10px;
+    border-radius: 5px;
+    display: none;
+  }
 
-        .pin-input:focus {
-            outline: none;
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 3px rgba(123, 44, 191, 0.2);
-            background: rgba(255, 255, 255, 0.08);
-            transform: translateY(-3px);
-        }
+  .hint:hover {
+    display: block;
+  }
 
-        .submit-btn {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-weight: 600;
-            font-size: 1.05rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 5px 15px rgba(123, 44, 191, 0.3);
-            font-family: 'Exo 2', sans-serif;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .submit-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.7s;
-        }
-
-        .submit-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(123, 44, 191, 0.4);
-        }
-
-        .submit-btn:hover::before {
-            left: 100%;
-        }
-
-        .submit-btn:active {
-            transform: translateY(-1px);
-        }
-
-        /* Footer credit */
-        .footer-credit {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(26, 19, 51, 0.8);
-            backdrop-filter: blur(10px);
-            padding: 12px 30px;
-            border-radius: 50px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            transition: all 0.4s ease;
-            z-index: 10;
-        }
-
-        .footer-credit a {
-            font-size: 1.1rem;
-            font-weight: bold;
-            text-decoration: none;
-            color: white;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .footer-credit:hover {
-            transform: translateX(-50%) translateY(-8px);
-            box-shadow: 0 15px 40px rgba(123, 44, 191, 0.3);
-            border-color: rgba(255, 255, 255, 0.25);
-            background: rgba(58, 12, 163, 0.8);
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 480px) {
-            .login-container {
-                padding: 30px 20px;
-            }
-            
-            .login-title {
-                font-size: 2rem;
-            }
-            
-            .pin-input {
-                width: 50px;
-                height: 60px;
-                font-size: 1.7rem;
-            }
-        }
-
-        .tooltip {
-            position: relative;
-            display: inline-block;
-            cursor: pointer;
-            margin-left: 10px;
-        }
-
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 160px;
-            background-color: rgba(26, 19, 51, 0.8);
-            color: var(--text-color);
-            text-align: center;
-            border-radius: 6px;
-            padding: 5px 0;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            margin-left: -80px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        .tooltip .tooltiptext:hover {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        .tooltip i {
-            color: var(--accent-color);
-        }
-    </style>
+</style>
 </head>
 <body>
-    <!-- Star field background -->
-    <div id="stars-container"></div>
-    
-    <!-- Cosmic nebula effects -->
-    <div class="nebula nebula-1"></div>
-    <div class="nebula nebula-2"></div>
-    
-    <!-- Shooting stars - contained within the viewport -->
-    <div class="shooting-star" style="top: 15%; left: 60%; max-width: 100%; max-height: 100%;"></div>
-    <div class="shooting-star" style="top: 40%; left: 10%; max-width: 100%; max-height: 100%;"></div>
-    <div class="shooting-star" style="top: 70%; left: 80%; max-width: 100%; max-height: 100%;"></div>
 
-    <div class="login-container">
-        <h1 class="login-title">Cosmic Links</h1>
-        <div class="tooltip">
-            <i class="fas fa-question-circle"></i>
-            <span class="tooltiptext">What is the greatest app ever created? (hint: it was used to make this)</span>
-        </div>
-        <p class="login-subtitle">Enter the access code to continue</p>
+<div class="quiz-container" style="margin-top: 100px;">
+  <h1 >Math Quiz</h1>
+  <div class="question-container">
+    <p id="question">What is 2 + 2?</p>
+    <div class="hint" style="display: inline-block; margin-top: 10px;margin-left: 10px; font-size: 12px; color: #666;">Motivation: Curiosity is the password to every equation.</div>
 
-        <div class="pin-container">
-            <input type="password" class="pin-input" maxlength="1" data-index="1">
-            <input type="password" class="pin-input" maxlength="1" data-index="2">
-            <input type="password" class="pin-input" maxlength="1" data-index="3">
-            <input type="password" class="pin-input" maxlength="1" data-index="4">
-        </div>
-        <button class="submit-btn" onclick="checkPassword()">
-            <i class="fas fa-unlock-alt"></i> Unlock Access
-        </button>
-    </div>
-    
-    <div class="footer-credit">
-        <a href="https://seeksimpler.com" target="_blank">
-            <i class="fas fa-code"></i> Coded by Seek
-        </a>
-    </div>
+  </div>
+  <input type="text" id="answer" >
+  <button onclick="checkAnswer()">Submit</button>
+</div>
 
-    <script>
-        // Create stars animation with different sizes
-        function createStars() {
-            const starsContainer = document.getElementById('stars-container');
-            starsContainer.innerHTML = ''; // Clear existing stars
-            
-            // Create different size stars for more dynamic effect
-            for (let i = 0; i < 250; i++) {
-                const star = document.createElement('div');
-                star.classList.add('star');
-                
-                // Random position
-                star.style.top = Math.random() * 100 + '%';
-                star.style.left = Math.random() * 100 + '%';
-                
-                // Random size (1-3px)
-                const size = Math.random() * 2 + 1;
-                star.style.width = `${size}px`;
-                star.style.height = `${size}px`;
-                
-                // Random animation delays and durations
-                star.style.animationDelay = Math.random() * 5 + 's';
-                star.style.animationDuration = Math.random() * 15 + 5 + 's';
-                star.style.setProperty('--duration', Math.random() * 15 + 5 + 's');
-                
-                // Brighter stars occasionally
-                if (Math.random() > 0.8) {
-                    star.style.boxShadow = `0 0 ${Math.random() * 6 + 2}px rgba(255, 255, 255, 0.8)`;
-                }
-                
-                starsContainer.appendChild(star);
-            }
-        }
+<script>
+  var questions = [
+  // Basic Arithmetic
+  { question: "What is 2 + 2?", answer: "4" },
+  { question: "What is 5 * 3?", answer: "15" },
+  { question: "What is 10 - 5?", answer: "5" },
+  { question: "What is 8 / 2?", answer: "4" },
+  { question: "What is 7 + 9?", answer: "16" },
+  { question: "What is 12 - 4?", answer: "8" },
+  { question: "What is 6 * 6?", answer: "36" },
+  { question: "What is 20 / 4?", answer: "5" },
+  { question: "What is 15 + 8?", answer: "23" },
+  { question: "What is 25 - 12?", answer: "13" },
+  
+  // More Multiplication and Division
+  { question: "What is 9 * 7?", answer: "63" },
+  { question: "What is 30 / 5?", answer: "6" },
+  { question: "What is 11 + 13?", answer: "24" },
+  { question: "What is 18 - 9?", answer: "9" },
+  { question: "What is 4 * 8?", answer: "32" },
+  { question: "What is 40 / 8?", answer: "5" },
+  { question: "What is 16 + 7?", answer: "23" },
+  { question: "What is 22 - 15?", answer: "7" },
+  { question: "What is 10 * 10?", answer: "100" },
+  { question: "What is 100 / 10?", answer: "10" },
+  
+  // Powers, Roots, and Special Numbers
+  { question: "What is the square root of 9?", answer: "3" },
+  { question: "What is 2 cubed?", answer: "8" },
+  { question: "What is 7 * 8?", answer: "56" },
+  { question: "What is 48 / 6?", answer: "8" },
+  { question: "What is 19 + 5?", answer: "24" },
+  { question: "What is 30 - 17?", answer: "13" },
+  { question: "What is 11 * 11?", answer: "121" },
+  { question: "What is 64 / 8?", answer: "8" },
+  { question: "What is 23 + 9?", answer: "32" },
+  { question: "What is 45 - 20?", answer: "25" },
+  
+  // Intermediate Arithmetic
+  { question: "What is 143 + 59?", answer: "202" },
+  { question: "What is 276 - 98?", answer: "178" },
+  { question: "What is 13 * 18?", answer: "234" },
+  { question: "What is 196 / 14?", answer: "14" },
+  { question: "What is 32 squared?", answer: "1024" },
+  { question: "What is the square root of 144?", answer: "12" },
+  { question: "What is 5 to the power of 4?", answer: "625" },
+  { question: "What is the cube root of 27?", answer: "3" },
+  { question: "What is 9 squared?", answer: "81" },
+  { question: "What is 4 to the power of 3?", answer: "64" },
+  
+  // Fractions and Decimals
+  { question: "What is 1/2 + 1/4?", answer: "3/4" },
+  { question: "What is 0.25 * 100?", answer: "25" },
+  { question: "What is 3/5 of 50?", answer: "30" },
+  { question: "What is 0.75 converted to a fraction?", answer: "3/4" },
+  { question: "What is 2.5 + 1.25?", answer: "3.75" },
+  { question: "What is 5/8 - 1/4?", answer: "3/8" },
+  { question: "What is 0.2 * 0.3?", answer: "0.06" },
+  { question: "What is 3/4 divided by 1/2?", answer: "1.5" },
+  { question: "What is 0.5 squared?", answer: "0.25" },
+  { question: "What is 1.5 + 2.25?", answer: "3.75" },
+  
+  // Negative Numbers
+  { question: "What is -7 + 12?", answer: "5" },
+  { question: "What is 4 - (-6)?", answer: "10" },
+  { question: "What is -9 * 7?", answer: "-63" },
+  { question: "What is -72 / 8?", answer: "-9" },
+  { question: "What is the absolute value of -15?", answer: "15" },
+  { question: "What is -3 squared?", answer: "9" },
+  { question: "What is (-5) * (-6)?", answer: "30" },
+  { question: "What is -18 / (-6)?", answer: "3" },
+  { question: "What is 25 + (-43)?", answer: "-18" },
+  { question: "What is -17 - (-10)?", answer: "-7" },
+  
+  // Algebraic Expressions
+  { question: "If x = 5, what is the value of 3x + 7?", answer: "22" },
+  { question: "If a = 4 and b = 9, what is a² + b²?", answer: "97" },
+  { question: "Solve for x: 2x + 5 = 13", answer: "4" },
+  { question: "Solve for y: 3y - 8 = 19", answer: "9" },
+  { question: "If z = 6, what is the value of z² - 5z?", answer: "6" },
+  { question: "Solve for x: 5x - 12 = 3x + 6", answer: "9" },
+  { question: "If a = 3 and b = 7, what is 2a + 3b?", answer: "27" },
+  { question: "Solve for m: 4m + 10 = 26", answer: "4" },
+  { question: "If p = 8, what is the value of p³ - p?", answer: "504" },
+  { question: "Solve for n: 7n/2 - 6 = 15", answer: "6" },
+  
+  // Geometry
+  { question: "What is the area of a square with side length 7 units?", answer: "49" },
+  { question: "What is the perimeter of a rectangle with length 8 and width 5?", answer: "26" },
+  { question: "What is the area of a circle with radius 4? (Use π = 3.14)", answer: "50.24" },
+  { question: "What is the volume of a cube with side length 3?", answer: "27" },
+  { question: "In a right triangle, if one angle is 30°, what is the other non-right angle?", answer: "60" },
+  { question: "What is the sum of all angles in a triangle?", answer: "180" },
+  { question: "What is the circumference of a circle with diameter 10? (Use π = 3.14)", answer: "31.4" },
+  { question: "If a triangle has a base of 8 and height of 6, what is its area?", answer: "24" },
+  { question: "What is the volume of a rectangular prism with length 4, width 3, and height 5?", answer: "60" },
+  { question: "What is the sum of all interior angles in a pentagon?", answer: "540" },
+  
+  // Percentages
+  { question: "What is 15% of 80?", answer: "12" },
+  { question: "What is 40% of 125?", answer: "50" },
+  { question: "If a shirt costs $45 and is discounted by 20%, what is the sale price?", answer: "$36" },
+  { question: "A number increased by 25% equals 75. What was the original number?", answer: "60" },
+  { question: "What is 7.5% of 200?", answer: "15" },
+  { question: "If a meal costs $24 and you want to leave a 15% tip, how much is the tip?", answer: "$3.60" },
+  { question: "A population of 5000 increases by 12% in one year. What is the new population?", answer: "5600" },
+  { question: "What percentage of 250 is 75?", answer: "30%" },
+  { question: "If the price of an item increases from $80 to $92, what is the percentage increase?", answer: "15%" },
+  { question: "A number decreased by 35% equals 130. What was the original number?", answer: "200" },
+  
+  // Number Theory
+  { question: "What is the greatest common factor (GCF) of 24 and 36?", answer: "12" },
+  { question: "What is the least common multiple (LCM) of 8 and 12?", answer: "24" },
+  { question: "Is 97 a prime number?", answer: "Yes" },
+  { question: "How many factors does the number 16 have?", answer: "5" },
+  { question: "What is the prime factorization of 45?", answer: "3² × 5" },
+  { question: "What is the sum of the first 10 natural numbers?", answer: "55" },
+  { question: "What is the 8th Fibonacci number? (Starting with 0, 1)", answer: "13" },
+  { question: "What is the remainder when 47 is divided by 5?", answer: "2" },
+  { question: "What is the sum of the digits of 2023?", answer: "7" },
+  { question: "What is the product of the first 5 prime numbers?", answer: "2310" },
+  
+  // Statistical Problems
+  { question: "What is the mean of the numbers 4, 7, 9, 12, and 18?", answer: "10" },
+  { question: "What is the median of the numbers 3, 5, 8, 10, 12?", answer: "8" },
+  { question: "What is the mode of 2, 3, 3, 5, 7, 9, 3?", answer: "3" },
+  { question: "What is the range of the set {8, 14, 19, 23, 7, 10}?", answer: "16" },
+  { question: "If the probability of an event is 0.35, what is the probability of it not occurring?", answer: "0.65" },
+  { question: "In a standard deck of 52 cards, what is the probability of drawing a heart?", answer: "1/4" },
+  { question: "What is the standard deviation of the dataset {5, 5, 5, 5, 5}?", answer: "0" },
+  { question: "If X and Y are independent events with P(X) = 0.3 and P(Y) = 0.2, what is P(X and Y)?", answer: "0.06" },
+  { question: "What is the variance of the numbers 4, 6, 8, 10, 12?", answer: "8" },
+  { question: "If there are 5 red marbles and 7 blue marbles in a bag, what is the probability of drawing a red marble?", answer: "5/12" },
+  
+  // Logarithms and Exponentials
+  { question: "What is log₁₀(100)?", answer: "2" },
+  { question: "What is ln(e²)?", answer: "2" },
+  { question: "What is e^0?", answer: "1" },
+  { question: "What is log₂(32)?", answer: "5" },
+  { question: "What is 10^(-2)?", answer: "0.01" },
+  { question: "What is the value of log₃(27)?", answer: "3" },
+  { question: "What is log₁₀(0.001)?", answer: "-3" },
+  { question: "If log₄(x) = 3, what is x?", answer: "64" },
+  { question: "What is the value of e^ln(7)?", answer: "7" },
+  { question: "What is log₈(4)?", answer: "2/3" },
+  
+  // Trigonometry
+  { question: "What is sin(90°)?", answer: "1" },
+  { question: "What is cos(0°)?", answer: "1" },
+  { question: "What is tan(45°)?", answer: "1" },
+  { question: "What is sin(30°)?", answer: "0.5" },
+  { question: "What is cos(60°)?", answer: "0.5" },
+  { question: "What is the value of sin²(θ) + cos²(θ) for any angle θ?", answer: "1" },
+  { question: "What is sin(180°)?", answer: "0" },
+  { question: "What is cos(180°)?", answer: "-1" },
+  { question: "What is tan(0°)?", answer: "0" },
+  { question: "If sin(α) = 0.6, what is cos(α)? (Round to 2 decimal places)", answer: "0.8" },
+  
+  // Complex Problems
+  { question: "Solve the quadratic equation: x² - 7x + 12 = 0", answer: "x = 3, x = 4" },
+  { question: "What is the derivative of f(x) = x³ - 2x² + 3x - 5?", answer: "3x² - 4x + 3" },
+  { question: "What is ∫(2x + 3)dx?", answer: "x² + 3x + C" },
+  { question: "What is the limit of (x² - 1)/(x - 1) as x approaches 1?", answer: "2" },
+  { question: "What is the solution to the system of equations: 3x + 2y = 7 and x - y = 1?", answer: "x = 3, y = 2" },
+  { question: "If f(x) = 3x + 2 and g(x) = x² - 1, what is (f ∘ g)(2)?", answer: "13" },
+  { question: "What is the determinant of the matrix [[2, 3], [1, 4]]?", answer: "5" },
+  { question: "What is the complex number i raised to the power of 4?", answer: "1" },
+  { question: "What is the sum of the infinite geometric series 1 + 1/2 + 1/4 + 1/8 + ...?", answer: "2" },
+  { question: "In a binomial distribution with n = 10 and p = 0.3, what is the probability of exactly 3 successes?", answer: "0.267" }
+];
 
-        createStars();
-        
-        // Recreate stars when window is resized
-        window.addEventListener('resize', createStars);
+  var currentQuestionIndex = 0;
 
-        // Set up pin input fields
-        const pinInputs = document.querySelectorAll('.pin-input');
-        
-        pinInputs.forEach((input, index) => {
-            // Auto-focus next input when a digit is entered
-            input.addEventListener('input', (e) => {
-                if (e.target.value.length === 1) {
-                    if (index < pinInputs.length - 1) {
-                        pinInputs[index + 1].focus();
-                    } else {
-                        // If last input is filled, unfocus it
-                        input.blur();
-                    }
-                }
-            });
-            
-            // Handle backspace to go to previous input
-            input.addEventListener('keydown', (e) => {
-                if (e.key === 'Backspace' && e.target.value.length === 0) {
-                    if (index > 0) {
-                        pinInputs[index - 1].focus();
-                    }
-                }
-            });
-        });
+  function checkAnswer() {
+    var userAnswer = document.getElementById('answer').value.trim();
+    if (userAnswer.toLowerCase() === 'curiosity') {
+      // Store flag in localStorage only if answer is 'seek'
+      localStorage.setItem('quizPassed', 'true');
+      // Redirect to success page or show success message (if you already do this)
+    }
 
-        function checkPassword() {
-            let pin = '';
-            pinInputs.forEach(input => {
-                pin += input.value;
-            });
-            
-            pin = pin.toLowerCase(); // Convert input to lowercase for case-insensitive comparison
-            
-            const submitBtn = document.querySelector('.submit-btn');
-            
-            if (pin === "seek") { // Replace with your desired password
-                // Show loading state
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Unlocking...';
-                
-                // Redirect after a short delay for visual feedback
-                setTimeout(() => {
-                    window.location.href = "success.html";
-                }, 1000);
-            } else {
-                // Visual feedback for incorrect password
-                submitBtn.innerHTML = '<i class="fas fa-times-circle"></i> Invalid Code';
-                submitBtn.style.background = 'linear-gradient(135deg, #ef4444, #991b1b)';
-                
-                pinInputs.forEach(input => {
-                    input.style.borderColor = 'rgba(239, 68, 68, 0.7)';
-                    input.style.boxShadow = '0 0 10px rgba(239, 68, 68, 0.5)';
-                    
-                    // Reset visual feedback after a delay
-                    setTimeout(() => {
-                        input.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                        input.style.boxShadow = 'none';
-                        input.value = '';
-                    }, 1200);
-                });
-                
-                // Reset button after a delay
-                setTimeout(() => {
-                    submitBtn.innerHTML = '<i class="fas fa-unlock-alt"></i> Unlock Access';
-                    submitBtn.style.background = 'linear-gradient(135deg, var(--primary-color), var(--secondary-color))';
-                    submitBtn.disabled = false;
-                    
-                    // Focus on first input after clearing
-                    pinInputs[0].focus();
-                }, 1500);
-            }
-        }
-    </script>
+    var userAnswer = document.getElementById("answer").value;
+
+    if (userAnswer.toLowerCase() === "curiosity") {
+      window.location.href = "success.html";
+      return;
+    }
+
+    if (userAnswer === questions[currentQuestionIndex].answer) {
+      alert("Correct!");
+    } else {
+      alert("Incorrect. Try again.");
+    }
+    nextQuestion();
+  }
+
+
+  function nextQuestion() {
+    currentQuestionIndex++;
+
+    if (currentQuestionIndex < questions.length) {
+      document.getElementById("question").textContent = questions[currentQuestionIndex].question;
+      document.getElementById("answer").value = ""; // Clear the input field
+    } else {
+      alert("Quiz complete!");
+      // Optionally reset the quiz or redirect to a results page
+    }
+  }
+
+
+</script>
+
 </body>
 </html>
